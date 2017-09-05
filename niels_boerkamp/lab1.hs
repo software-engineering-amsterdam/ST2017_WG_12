@@ -13,6 +13,10 @@ primesBelow :: Integer -> [Integer]
 primesBelow 0 = []
 primesBelow x = filter prime [0..x]
 
+data NonNegativeSmall = NonNegativeSmall Integer deriving Show
+instance Arbitrary NonNegativeSmall where
+    arbitrary = fmap NonNegativeSmall (choose (1, 10))
+
 -- Exercise 1a
 -- 5 minutes
 sumNumbersSquared :: Integer -> Integer
@@ -63,7 +67,7 @@ perms (x:xs) = concat (map (insrt x) (perms xs)) where
 
 exercise3 :: Integer -> Bool
 exercise3 x = factorial x == toInteger(length(perms [1..x]))
-  
+-- quickCheckResult(\(NonNegativeSmall x) -> exercise3 x)
   
 -- Exercise 4
 -- 50 minutes
