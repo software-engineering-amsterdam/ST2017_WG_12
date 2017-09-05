@@ -1,4 +1,3 @@
-module Lab1 where
 import Data.List
 import Test.QuickCheck
 
@@ -20,7 +19,9 @@ sumExerciseThree x = sumExerciseThree (x-1) + x^3
 sumExerciseThree' :: Integer -> Integer
 sumExerciseThree' x | x < 0 = error "negative number"
 sumExerciseThree' x = (x*(x+1) `div` 2)^2  
--- *Lab1> quickCheckResult (\(NonNegative x) -> sumExerciseThree x == sumExerciseThree' x)
+
+
+main = quickCheckResult (\(NonNegative x) -> sumExerciseThree x == sumExerciseThree' x)
 -- +++ OK, passed 100 tests.
 -- Success {numTests = 100, labels = [], output = "+++ OK, passed 100 tests.\n"}
 
