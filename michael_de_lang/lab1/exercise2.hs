@@ -15,3 +15,7 @@ main = do quickCheckResult (\(NonNegativeSmall x) -> 2^(length [1..x]) == length
 -- This means that what we're actually testing is whether or not this function generates data that at least *looks* like it fits with our hypothesis.
 
 -- time taken for writing this exercise: 60 minutes (of which ~20 minutes spend on figuring out custom modifiers)
+-- inspirations:
+-- https://www.stuartgunter.org/posts/intro-to-quickcheck/
+-- https://www.stackbuilders.com/news/a-quickcheck-tutorial-generators
+-- https://stackoverflow.com/questions/13354726/using-a-custom-generator-vs-arbitrary-instance-in-quickcheck
