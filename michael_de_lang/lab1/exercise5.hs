@@ -1,6 +1,6 @@
 import Data.List
 import System.Environment
-import Text.Printf
+
 sieve :: [Integer] -> [Integer]
 sieve [] = []
 sieve (n:ns) = n : sieve (filter (\m -> rem m n /= 0) ns)
