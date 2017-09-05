@@ -1,5 +1,4 @@
 import Data.List
-import System.Environment
 
 sieve :: [Integer] -> [Integer]
 sieve [] = []
