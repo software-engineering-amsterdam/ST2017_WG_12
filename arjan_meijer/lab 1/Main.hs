@@ -162,12 +162,12 @@ isVisa x = (y == 13 || y == 16 || y == 19) && read (take 1 (show x)) == 4 where 
 
 -- Test methods
 -- SOURCE for random numbergeneration [4]
-getRandomAmericanExpressCard :: Integer
-getRandomAmericanExpressCard = randAmericanExpress 34
+--getRandomAmericanExpressCard :: Integer
+--getRandomAmericanExpressCard = randAmericanExpress 34
 
-randAmericanExpress :: Integer -> Integer
-randAmericanExpress x | x < 15 = (show x) ++ show(randomRIO(0,9 :: Integer))
-                      | otherwise = read x
+--randAmericanExpress :: Integer -> Integer
+--randAmericanExpress x | x < 15 = (show x) ++ show(randomRIO(0,9 :: Integer))
+--                      | otherwise = read x
 
 
 -- Exercise 8
