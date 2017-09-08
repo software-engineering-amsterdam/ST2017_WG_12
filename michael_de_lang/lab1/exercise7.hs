@@ -13,10 +13,7 @@ mod10NoRemainder :: Integral a => a -> Bool
 mod10NoRemainder x = (mod x 10) == 0
 
 luhn :: [Integer] -> Bool
-luhn = mod10NoRemainder . sum . (altMap luhnDouble id)
-
-luhnAmericanExpress :: [Integer] -> Bool
-luhnAmericanExpress = mod10NoRemainder . sum . (altMap id luhnDouble)
+luhn = mod10NoRemainder . sum . (altMap id luhnDouble) . reverse
 
 -- taken from https://stackoverflow.com/questions/3963269/split-a-number-into-its-digits-with-haskell
 toDigits :: Integer -> [Integer]
@@ -27,7 +24,7 @@ toInt :: [Integer] -> Integer
 toInt = foldl addDigit 0 where addDigit num d = 10*num + d
 
 isAmericanExpress :: Integer -> Bool
-isAmericanExpress x = (firstTwo == 34 || firstTwo == 37) && length digits == 15 && luhnAmericanExpress digits where
+isAmericanExpress x = (firstTwo == 34 || firstTwo == 37) && length digits == 15 && luhn digits where
   digits = toDigits x
   firstTwo = toInt $ take 2 digits
 
@@ -45,7 +42,7 @@ checkValidity checker numbers unexpected name = do
   let values = map checker numbers
   if elem unexpected values then
     do
-      putStrLn $ show $ filter (\(x,y) -> x == True) $ zip (map checker numbers) numbers
+      putStrLn $ show $ filter (\(x,y) -> x == unexpected) $ zip values numbers
       putStrLn ("Error in " ++ name)
   else
     putStrLn (name ++ " passed test")
