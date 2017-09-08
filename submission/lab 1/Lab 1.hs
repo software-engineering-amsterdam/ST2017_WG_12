@@ -22,7 +22,7 @@ primes = 2 : filter prime [3..]
 
 primesBelow :: Integer -> [Integer]
 primesBelow 0 = []
-primesBelow x = filter prime [0..x]
+primesBelow x = takeWhile (< x) primes
 
 data NonNegativeSmall = NonNegativeSmall Integer deriving Show
 instance Arbitrary NonNegativeSmall where
@@ -30,7 +30,8 @@ arbitrary = fmap NonNegativeSmall (choose (1, 10))
 
 -- Exercise 1a
 -- We used the exercise of niels boerkamp because we thought that this one is 
--- easy to read
+-- easy to read, as well as all our work looking quite alike and having no clear winner
+-- on other metrics.
 sumNumbersSquared :: Integer -> Integer
 sumNumbersSquared x = sum( map (^2) [0..x])
 
@@ -44,12 +45,16 @@ sumNumbersCubed x = sum (map(^3) [0..x])
 exercise1b :: Integer -> Bool
 exercise1b x = sumNumbersCubed x == ((x * (x + 1)) `div` 2) ^ 2
 
-
+main = do
+    quickCheckResult (\(NonNegative n) -> exercise1a n)
+    quickCheckResult (\(NonNegative n) -> exercise1b n)
 
 -- Exercise 2
 data NonNegativeSmall = NonNegativeSmall Integer deriving Show
 instance Arbitrary NonNegativeSmall where
 arbitrary = fmap NonNegativeSmall (choose (1, 25))
+
+main = do quickCheckResult (\(NonNegativeSmall x) -> 2^(length [1..x]) == length (subsequences [1..x]))
 
 -- Making the generator generate lists of size [1..25] means that there'll be redundant tests.
 -- Making the generated lists larger than this leads to exponential times, after 25 my machine simply takes too long. This is due to powersets by definition creating exponential results. Permutating over that simply requires a lot of computational power.
@@ -72,6 +77,8 @@ data PositiveSmaller = PositiveSmaller Int deriving Show
 instance Arbitrary PositiveSmaller where
 arbitrary = fmap PositiveSmaller (choose (1, 10))
 
+main = do quickCheckResult (\(PositiveSmall n) -> checkPowerSetLength n)
+
 -- Exercise 4
 
 -- Reversal check
@@ -86,14 +93,20 @@ checkReversal :: Int -> Bool
 checkReversal n = reversal n == reversal (reversal n)
 
 findReversalPrimes :: Int -> [Int]
-findReversalPrimes n = map reversal (filter prime (map reversal (takeWhile (<n) primes))
+findReversalPrimes n = map reversal (filter prime (map reversal (takeWhile (<n) primes)))
 
+main = do
+    putStrLn $ show $ findReversalPrimes 10000
 
 -- Exercise 5
 sumSmallestConsecutivePrimes :: Int -> Int -> [Integer]
 sumSmallestConsecutivePrimes x s | prime (sum consecutivePrimes) = (sum consecutivePrimes) : consecutivePrimes
                                  | otherwise = sumSmallestConsecutivePrimes x (s+1)
-where consecutivePrimes = (take x (drop s primes))
+                                 where consecutivePrimes = (take x (drop s primes))
+
+-- output is a list with 102 elements, the 0th element being the answer and every element after it are the primes used to sum to get to this answer.
+main = do
+    putStrLn $ show $ sumSmallestConsecutivePrimes 101 0
 
 -- This does not need to be tested since the function continues until it
 -- finds a correct answer.
@@ -110,8 +123,11 @@ where consecutivePrimes = (take x (drop s primes))
 -- Exercise 6
 -- The smallest counter example are the first 6 consecutive prime numbers.
 
-consecutivePrimesProductPlusOne :: Int -> Int
+consecutivePrimesProductPlusOne :: Int -> Integer
 consecutivePrimesProductPlusOne n = product (take n primes) + 1
+
+main = do
+    quickCheckResult (\(NonNegative n) -> prime (consecutivePrimesProductPlusOne n))
 
 -- Exercise 7
 
@@ -128,10 +144,7 @@ mod10NoRemainder :: Integral a => a -> Bool
 mod10NoRemainder x = (mod x 10) == 0
 
 luhn :: [Integer] -> Bool
-luhn = mod10NoRemainder . sum . (altMap luhnDouble id)
-
-luhnAmericanExpress :: [Integer] -> Bool
-luhnAmericanExpress = mod10NoRemainder . sum . (altMap id luhnDouble)
+luhn = mod10NoRemainder . sum . (altMap id luhnDouble) . reverse
 
 -- taken from https://stackoverflow.com/questions/3963269/split-a-number-into-its-digits-with-haskell
 toDigits :: Integer -> [Integer]
@@ -142,7 +155,7 @@ toInt :: [Integer] -> Integer
 toInt = foldl addDigit 0 where addDigit num d = 10*num + d
 
 isAmericanExpress :: Integer -> Bool
-isAmericanExpress x = (firstTwo == 34 || firstTwo == 37) && length digits == 15 && luhnAmericanExpress digits where
+isAmericanExpress x = (firstTwo == 34 || firstTwo == 37) && length digits == 15 && luhn digits where
   digits = toDigits x
   firstTwo = toInt $ take 2 digits
 
@@ -160,7 +173,7 @@ checkValidity checker numbers unexpected name = do
   let values = map checker numbers
   if elem unexpected values then
     do
-      putStrLn $ show $ filter (\(x,y) -> x == True) $ zip (map checker numbers) numbers
+      putStrLn $ show $ filter (\(x,y) -> x == unexpected) $ zip values numbers
       putStrLn ("Error in " ++ name)
   else
     putStrLn (name ++ " passed test")
@@ -211,6 +224,10 @@ guilty, honest :: [Boy]
 guilty = [ x | x <- boys, length (accusers x) == 3]
 honest = [ x | x <- boys, accuses x (head guilty)]
 
+main = do
+    putStrLn $ show $ guilty
+    putStrLn $ show $ honest
+
 -- Guilty : Jack
 -- Honest: Matthew, Peter & Carl
 
@@ -218,8 +235,11 @@ honest = [ x | x <- boys, accuses x (head guilty)]
 pythagoreanTriples :: Int -> [(Int, Int, Int)]
 pythagoreanTriples n = [(a, b, c) | c <- [1..(div n 2)], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2 && a + b + c == n]
 
+main = do pythagoreanTriples 1000
+
 -- Euler 10
-euler10 = sum (primesBelow 2000000)
+main = do
+    putStrLn $ show $ sum (primesBelow 2000000)
 
 -- Euler 49
 main = do
