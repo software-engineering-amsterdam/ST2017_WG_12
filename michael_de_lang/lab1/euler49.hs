@@ -4,10 +4,15 @@ import Data.List
 toDigits :: Integer -> [Integer]
 toDigits n = map (\x -> read [x] :: Integer) (show n)
 
--- taken from https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell
-toInt :: [Integer] -> Integer
-toInt = foldl addDigit 0 where addDigit num d = 10*num + d
+prime :: Integer -> Bool
+prime n = n > 1 && all (\ x -> rem n x /= 0) xs
+  where xs = takeWhile (\ y -> y^2 <= n) primes
+
+primes :: [Integer]
+primes = 2 : filter prime [3..]
+
 
 main = do
-  putStrLn $ show $ [(x, x + 3330, x + 6660) | x <- [1..4000], elem (toDigits (x + 3330)) (permutations (toDigits x)), elem (toDigits (x + 6660)) (permutations (toDigits x))]
--- time taken: 5m
+  putStrLn $ show $ [(x, x + 3330, x + 6660) | x <- (takeWhile (< 4000) primes), elem (toDigits (x + 3330)) (permutations (toDigits x)), elem (toDigits (x + 6660)) (permutations (toDigits x)), prime (x + 3330), prime (x + 6660)]
+-- time taken: 10m
+-- This gives back two results: one tuple that is given in the problem and another tuple that is the other sequence the problem is talking about. Concatenated, this gives 296962999629.

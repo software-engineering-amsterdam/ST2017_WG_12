@@ -222,13 +222,7 @@ pythagoreanTriples n = [(a, b, c) | c <- [1..(div n 2)], b <- [1..c], a <- [1..b
 euler10 = sum (primesBelow 2000000)
 
 -- Euler 49
--- taken from https://stackoverflow.com/questions/3963269/split-a-number-into-its-digits-with-haskell
-toDigits :: Integer -> [Integer]
-toDigits n = map (\x -> read [x] :: Integer) (show n)
-
--- taken from https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell
-toInt :: [Integer] -> Integer
-toInt = foldl addDigit 0 where addDigit num d = 10*num + d
-
 main = do
-putStrLn $ show $ [(x, x + 3330, x + 6660) | x <- [1..4000], elem (toDigits (x + 3330)) (permutations (toDigits x)), elem (toDigits (x + 6660)) (permutations (toDigits x))]
+  putStrLn $ show $ [(x, x + 3330, x + 6660) | x <- (primesBelow 4000), elem (toDigits (x + 3330)) (permutations (toDigits x)), elem (toDigits (x + 6660)) (permutations (toDigits x)), prime (x + 3330), prime (x + 6660)]
+-- This gives back two results: one tuple that is given in the problem and another tuple that is the other sequence the problem is talking about. Concatenated, this gives 296962999629.
+
