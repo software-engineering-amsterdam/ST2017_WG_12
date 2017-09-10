@@ -5,7 +5,7 @@
 -- Constatijn Bicker Caarten
 -- Arjan Meijer
 
--- Lab 1 exercises 
+-- Lab 1 exercises
 -- 05-09-2017
 
 
@@ -29,7 +29,7 @@ instance Arbitrary NonNegativeSmall where
 arbitrary = fmap NonNegativeSmall (choose (1, 10))
 
 -- Exercise 1
--- We used the exercise of Niels Boerkamp because we thought that this one is 
+-- We used the exercise of Niels Boerkamp because we thought that this one is
 -- easy to read, as well as all our work looking quite alike and having no clear winner
 -- on other metrics.
 
@@ -64,7 +64,7 @@ ExerciseTwo = do quickCheckResult (\(NonNegativeSmall x) -> 2^(length [1..x]) ==
 
 -- Making the generator generate lists of size [1..25] means that there'll be redundant tests.
 -- Making the generated lists larger than this leads to exponential times, after 25 my machine simply takes too long. This is due to powersets by definition creating exponential results. Permutating over that simply requires a lot of computational power.
--- What is actually tested here is if subsequences produces a list of lists with the expected size, but the actual contents(whether the list is unique for example) is not tested. 
+-- What is actually tested here is if subsequences produces a list of lists with the expected size, but the actual contents(whether the list is unique for example) is not tested.
 -- This means that what we're actually testing is whether or not this function generates data that at least *looks* like it fits with our hypothesis.
 
 -- inspirations:
@@ -76,16 +76,18 @@ ExerciseTwo = do quickCheckResult (\(NonNegativeSmall x) -> 2^(length [1..x]) ==
 -- We used the exercise of Constatijn because we thought this exercise used the most efficient and compact calculation method for the factorial
 
 -- This is hard to test, because this requires a lot of computation for large
--- powersets. This checks a mathimatical fact but does not proof it.
+-- powersets since its length grows exponential. This checks a mathimatical
+-- fact but does not proof it.
 
 factorial :: Int -> Int
 factorial n = product [1..n]
 
+-- Custom test data set with range [1-20]
 data PositiveSmaller = PositiveSmaller Int deriving Show
 instance Arbitrary PositiveSmaller where
 arbitrary = fmap PositiveSmaller (choose (1, 10))
 
-ExerciseThree = do quickCheckResult (\(PositiveSmall n) -> checkPowerSetLength n)
+ExerciseThree = do quickCheckResult (\(PositiveSmall n) -> length (subsequences [1..n]) == 2^n)
 
 -- Exercise 4
 
@@ -93,24 +95,21 @@ ExerciseThree = do quickCheckResult (\(PositiveSmall n) -> checkPowerSetLength n
 
 -- Reversal check
 -- Reversal fails for negative numbers and numbers ending in zeros, but
--- there are no primes with this property so it poses no problem for
+-- there are no primes with this property so this poses no problem for
 -- finding primes which reversed are primes as well.
 
 reversal :: Int -> Int
 reversal = read . reverse. show
-
-checkReversal :: Int -> Bool
-checkReversal n = reversal n == reversal (reversal n)
 
 findReversalPrimes :: Int -> [Int]
 findReversalPrimes n = map reversal (filter prime (map reversal (takeWhile (<n) primes)))
 
 ExerciseFour = do
     putStrLn $ show $ findReversalPrimes 10000
-	quickCheckResult(\(NonNegative x) -> checkReversal x)
+	quickCheckResult(\(NonNegative n) -> n == reversal (reversal n))
 
 -- Exercise 5
--- We used the exercise of Michael because he created a single function to do this exercise,
+-- We used the exercise of Michael because he created a single function that solves this exercise,
 -- the rest of the team splitted it in two or more functions.
 sumSmallestConsecutivePrimes :: Int -> Int -> [Integer]
 sumSmallestConsecutivePrimes x s | prime (sum consecutivePrimes) = (sum consecutivePrimes) : consecutivePrimes
@@ -127,9 +126,9 @@ ExerciseFive = do
 -- I.   The given are primes and should be consecutive
 -- II.  The sum must be correct
 -- III. The sequence should start as low as possible
-	
 
--- ORIGIONAL COMMENTS:	
+
+-- ORIGIONAL COMMENTS:
 -- This does not need to be tested since the function continues until it
 -- finds a correct answer.
 
@@ -173,7 +172,7 @@ luhn = mod10NoRemainder . sum . (altMap id luhnDouble) . reverse
 toDigits :: Integer -> [Integer]
 toDigits n = map (\x -> read [x] :: Integer) (show n)
 
--- taken from https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell 
+-- taken from https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell
 toInt :: [Integer] -> Integer
 toInt = foldl addDigit 0 where addDigit num d = 10*num + d
 
@@ -184,7 +183,7 @@ isAmericanExpress x = (firstTwo == 34 || firstTwo == 37) && length digits == 15 
 
 isMaster :: Integer -> Bool
 isMaster x = ((firstTwo >= 51 && firstTwo <= 55) || (firstFour >= 2221 && firstFour <=2720)) && length digits == 16 && luhn digits where
-  digits = toDigits x 
+  digits = toDigits x
   firstTwo = toInt $ take 2 digits
   firstFour = toInt $ take 4 digits
 
@@ -217,11 +216,11 @@ ExerciseSeven = do
   checkValidity isMaster wrongMasterNumbers True "Mastercard Invalid Values"
   checkValidity isVisa wrongVisaNumbers True "Visa Invalid Values"
 
--- I took the Haskell premaster with the Programming in Haskell book, so I already had the luhn function readily available. 
+-- I took the Haskell premaster with the Programming in Haskell book, so I already had the luhn function readily available.
 -- Some guy put the answers on github: https://github.com/adrianwong/programming-in-haskell-2nd-edition/blob/master/ch07_solutions.hs
 
 -- Exercise 8
--- We used the exercise of Arjan because we  he had the cleanest code with results we could all agree on
+-- We used the exercise of Arjan because he had the cleanest code with results we could all agree on
 data Boy = Matthew | Peter | Jack | Arnold | Carl
            deriving (Eq, Show)
 boys = [Matthew, Peter, Jack, Arnold, Carl]
@@ -256,6 +255,7 @@ ExerciseEight = do
 
 -- Euler 9
 -- We used the exercise of Constatijn because he had the most efficient code
+-- Based on: https://stackoverflow.com/questions/7261667/pythagorean-triple-in-haskell-without-symmetrical-solutions/33727703#33727703
 pythagoreanTriples :: Int -> [(Int, Int, Int)]
 pythagoreanTriples n = [(a, b, c) | c <- [1..(div n 2)], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2 && a + b + c == n]
 
