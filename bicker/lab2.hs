@@ -125,8 +125,19 @@ ibanReplaceLetters iban = joiner (map ibanCharToInt (ibanRearange iban))
 ibanCountryValidation :: String -> Bool
 ibanCountryValidation iban
     | cc == "BE" = length iban == 16
+    | cc == "BR" = length iban == 29
+    | cc == "CH" = length iban == 21
+    | cc == "DE" = length iban == 22
+    | cc == "ES" = length iban == 24
+    | cc == "FR" = length iban == 27
     | cc == "GB" = length iban == 22
+    | cc == "GR" = length iban == 27
+    | cc == "IE" = length iban == 22
+    | cc == "IT" = length iban == 27
     | cc == "NL" = length iban == 18
+    | cc == "NO" = length iban == 15
+    | cc == "PL" = length iban == 28
+    | cc == "TR" = length iban == 26
     | otherwise = False
     where cc = take 2 iban
 
