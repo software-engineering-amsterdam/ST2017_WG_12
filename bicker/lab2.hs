@@ -7,7 +7,6 @@ import Data.List
 import Data.Char
 import System.Random
 import Test.QuickCheck
-import Debug.Trace
 
 infix 1 -->
 
@@ -132,7 +131,7 @@ instance Arbitrary RandomString where
     arbitrary = fmap RandomString (listOf $ elements (map chr [0..127]))
 
 prop_selfInverse, prop_affect, prop_nonAffect :: String -> Bool
-prop_selfInverse string = string == trace (string) rot13 (rot13 string)
+prop_selfInverse string = string == rot13 (rot13 string)
 
 prop_affect string
     | string' == "" = True
@@ -143,6 +142,8 @@ prop_nonAffect string = string' == rot13 string'
     where string' = filter (\ x -> not (elem x (['a'..'z'] ++ ['A'..'Z']))) string
 
 -- quickCheckResult (\ (RandomString xs) -> prop_selfInverse xs)
+-- quickCheckResult (\ (RandomString xs) -> prop_affect xs)
+-- quickCheckResult (\ (RandomString xs) -> prop_nonAffect xs)
 
 -- Exercise 7 (20 minutes) TODO strip whitespace
 
