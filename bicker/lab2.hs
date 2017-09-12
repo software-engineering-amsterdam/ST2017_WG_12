@@ -152,20 +152,21 @@ ibanValidation iban = ibanCountryValidation iban && (mod (ibanReplaceLetters iba
 
 ibanCountryValidation :: String -> Bool
 ibanCountryValidation iban
-    | cc == "BE" = length iban == 16
-    | cc == "BR" = length iban == 29
-    | cc == "CH" = length iban == 21
-    | cc == "DE" = length iban == 22
-    | cc == "ES" = length iban == 24
-    | cc == "FR" = length iban == 27
-    | cc == "GB" = length iban == 22
-    | cc == "GR" = length iban == 27
-    | cc == "IE" = length iban == 22
-    | cc == "IT" = length iban == 27
-    | cc == "NL" = length iban == 18
-    | cc == "NO" = length iban == 15
-    | cc == "PL" = length iban == 28
-    | cc == "TR" = length iban == 26
+    | cc == "BE" = length iban == 16 -- Belgium
+    | cc == "BR" = length iban == 29 -- Brazil
+    | cc == "CH" = length iban == 21 -- Switzerland
+    | cc == "DE" = length iban == 22 -- Germany
+    | cc == "ES" = length iban == 24 -- Spain
+    | cc == "FR" = length iban == 27 -- France
+    | cc == "GB" = length iban == 22 -- United Kingdom
+    | cc == "GR" = length iban == 27 -- Greece
+    | cc == "IE" = length iban == 22 -- Ireland
+    | cc == "IT" = length iban == 27 -- Italy
+    | cc == "NL" = length iban == 18 -- Netherlands
+    | cc == "NO" = length iban == 15 -- Norway
+    | cc == "PL" = length iban == 28 -- Poland
+    | cc == "PT" = length iban == 25 -- Portugal
+    | cc == "TR" = length iban == 26 -- Turkey
     | otherwise = False
     where cc = take 2 iban
 
