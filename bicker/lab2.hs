@@ -7,6 +7,7 @@ import Data.List
 import Data.Char
 import System.Random
 import Test.QuickCheck
+import Debug.Trace
 
 infix 1 -->
 
@@ -58,8 +59,11 @@ triangle a b c
     | a == b || a == c || b == c = Isosceles
     | otherwise = Other
 
-
--- quickCheckResult (\(Positive n) -> triangle n n n == Equilateral)
+-- quickCheckResult (\ (Positive a) (Positive b) -> triangle a b (a + b + 1) == NoTriangle)
+-- quickCheckResult (\ (Positive n) -> triangle n n n == Equilateral)
+-- quickCheckResult (\ (Positive a) (Positive b) -> triangle a b (a^2 + b^2) == Rectangular) TODO a = 0
+-- quickCheckResult (\ (Positive a) -> triangle a a (a + a) == Isosceles)
+--
 
 -- Exercise 3 (5 minutes)
 stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
@@ -85,6 +89,10 @@ isPermutation' (h:t) list
     | elem h list = isPermutation' t (delete h list)
     | otherwise = False
 
+-- Properties:
+-- > Same length
+-- > Same elements
+
 -- Exercise 5 (7 minutes)
 
 isDerangement, isDerangement' :: [Int] -> [Int] -> Bool
@@ -100,6 +108,12 @@ isDerangement' (h1:t1) (h2:t2)
 deran :: [Int] -> [[Int]]
 deran list = filter (isDerangement list) (permutations list)
 
+-- Properties:
+-- > Same length
+-- > Same elements
+-- > Different indices
+-- > Self-inverses
+
 -- Exercise 6 (15 minutes)
 rot13 :: String -> String
 rot13 w = rot13' w []
@@ -111,16 +125,29 @@ rot13' (h:t) w2
     | isUpper h = rot13' t ((chr (mod (ord h - 65 + 13) 26 + 65)):w2)
     | otherwise = rot13' t (h:w2)
 
--- let string = "Why did the chicken cross the road?"
--- string == rot13 (rot13 string)
+-- Specification:
+
+data RandomString = RandomString String deriving Show
+instance Arbitrary RandomString where
+    arbitrary = fmap RandomString (listOf $ elements (map chr [0..127]))
+
+prop_selfInverse, prop_affect, prop_nonAffect :: String -> Bool
+prop_selfInverse string = string == trace (string) rot13 (rot13 string)
+
+prop_affect string
+    | string' == "" = True
+    | otherwise = string' /= rot13 string'
+    where string' = filter (\ x -> elem x (['a'..'z'] ++ ['A'..'Z'])) string
+
+prop_nonAffect string = string' == rot13 string'
+    where string' = filter (\ x -> not (elem x (['a'..'z'] ++ ['A'..'Z']))) string
+
+-- quickCheckResult (\ (RandomString xs) -> prop_selfInverse xs)
 
 -- Exercise 7 (20 minutes) TODO strip whitespace
 
 ibanValidation :: String -> Bool
 ibanValidation iban = ibanCountryValidation iban && (mod (ibanReplaceLetters iban) 97 == 1)
-
-ibanReplaceLetters :: String -> Integer
-ibanReplaceLetters iban = joiner (map ibanCharToInt (ibanRearange iban))
 
 ibanCountryValidation :: String -> Bool
 ibanCountryValidation iban
@@ -140,6 +167,9 @@ ibanCountryValidation iban
     | cc == "TR" = length iban == 26
     | otherwise = False
     where cc = take 2 iban
+
+ibanReplaceLetters :: String -> Integer
+ibanReplaceLetters iban = joiner (map ibanCharToInt (ibanRearange iban))
 
 ibanRearange :: String -> String
 ibanRearange iban = (drop 4 iban) ++ (take 4 iban)
