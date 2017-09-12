@@ -135,7 +135,8 @@ instance Arbitrary RandomString where
 exercise6 = do quickCheckResult(\(RandomString x) -> rot13 (rot13 x) == x)
 
 --ibanDutch :: String -> Bool
-
+-- Exercise 7 - WIP
+-- 45 minutes
 prop_dutchIBANLength :: String -> Bool
 prop_dutchIBANLength x = length  x == 18
 
