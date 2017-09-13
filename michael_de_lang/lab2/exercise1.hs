@@ -1,6 +1,5 @@
 import Data.List
 import System.Random
-import System.IO.Unsafe
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
