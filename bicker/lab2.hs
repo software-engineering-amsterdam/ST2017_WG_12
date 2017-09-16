@@ -92,6 +92,12 @@ isPermutation' (h:t) list
 -- > Same length
 -- > Same elements
 
+data RandomIntListSmall = RandomIntListSmall [Int] deriving Show
+instance Arbitrary RandomIntListSmall where
+    arbitrary = fmap RandomIntListSmall (sublistOf [1..10])
+
+-- quickCheckResult (\ (RandomIntListSmall xs) -> and (map (isPermutation xs) (permutations xs)))
+
 -- Exercise 5 (7 minutes)
 
 isDerangement, isDerangement' :: [Int] -> [Int] -> Bool
@@ -113,7 +119,8 @@ deran list = filter (isDerangement list) (permutations list)
 -- > Different indices
 -- > Self-inverses
 
--- Exercise 6 (15 minutes)
+-- Exercise 6 (35 minutes)
+
 rot13 :: String -> String
 rot13 w = rot13' w []
 
@@ -145,7 +152,7 @@ prop_nonAffect string = string' == rot13 string'
 -- quickCheckResult (\ (RandomString xs) -> prop_affect xs)
 -- quickCheckResult (\ (RandomString xs) -> prop_nonAffect xs)
 
--- Exercise 7 (20 minutes) TODO strip whitespace
+-- Exercise 7 (30 minutes)
 
 ibanValidation :: String -> Bool
 ibanValidation iban = ibanCountryValidation iban && (mod (ibanReplaceLetters iban) 97 == 1)
@@ -185,3 +192,13 @@ ibanCharToInt char
 -- source: https://stackoverflow.com/questions/1918486/convert-list-of-integers-into-one-int-like-concat-in-haskell/1918522#1918522
 joiner :: [Integer] -> Integer
 joiner = read . concatMap show
+
+ibanTest :: Bool
+ibanTest = and (map ibanValidation testSetTrue) && and (map not (map ibanValidation testSetFalse))
+    where
+        testSetTrue = ["BE62510007547061","FR1420041010050500013M02606","DE89370400440532013000","GR1601101250000000012300695","IE29AIBK93115212345678","IT40S0542811101000000123456","NL39RABO0300065264","NO9386011117947","PL60102010260000042270201111","PT50000201231234567890154","ES8023100001180000012345","CH9300762011623852957","TR330006100519786457841326"]
+        testSetFalse = ["BE6251000754706", "BE62510007547062", "BX62510007547062", "IT40S0542811101000000123459", "ZT40S0542811101000000123456"]
+
+-- It is possible to automate the test process by generating random valid
+-- and invalid IBANs. Generating valid IBANs can be done by using the
+-- requierements...
