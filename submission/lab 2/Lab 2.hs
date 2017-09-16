@@ -289,3 +289,28 @@ ibanTest = and (map ibanValidation testSetTrue) && and (map not (map ibanValidat
 -- It is possible to automate the test process by generating random valid
 -- and invalid IBANs. Generating valid IBANs can be done by using the
 -- requierements...
+
+-- Euler 7
+prime :: Integer -> Bool
+prime n = n > 1 && all (\ x -> rem n x /= 0) xs
+    where xs = takeWhile (\ y -> y^2 <= n) primes
+
+primes :: [Integer]
+primes = 2 : filter prime [3..]
+
+eulerSeven = head (take 1 (drop 10000 primes))
+-- Answer: 104743
+
+-- Euler 20
+e20 :: Integer -> Integer
+e20 n = toInteger(sum (map digitToInt (show (product [1..n]))))
+
+-- Euler 35
+primesBelow :: Integer -> [Integer]
+primesBelow 0 = []
+primesBelow x = takeWhile (< x) primes
+
+e35 = length (filter e35' (primesBelow (10^4)))
+
+e35' :: Integer -> Bool
+e35' n = prime n && and (map (\x -> prime (read x)) (deran (show n)))
