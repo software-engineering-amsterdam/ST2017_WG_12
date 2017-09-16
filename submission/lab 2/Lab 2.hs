@@ -13,8 +13,6 @@ import Data.Char
 import System.Random
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
-import Debug.Trace
-
 
 data NonNegativeLarge = NonNegativeLarge Int deriving Show
 instance Arbitrary NonNegativeLarge where
