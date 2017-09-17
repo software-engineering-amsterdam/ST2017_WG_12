@@ -1,5 +1,3 @@
--- THIS IS NOT THE FINAL VERSION
--- THOU SHALL NOT PASS WITH THIS
 -- Niels Boerkamp
 -- Michael de Lang
 -- Constantijn Bicker Caarten
