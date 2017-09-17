@@ -76,6 +76,12 @@ exerciseOne = quickCheckResult (\(NonNegativeLarge x) -> check x)
 -- There are also no big defferences in the sum of these four tests,
 -- Therefore we can assume that the method works
 
+-- time taken:
+-- Arjan: 45m
+-- Constantijn: 15m
+-- Michael: 150m (needed time to figure out how to quickcheck with monads and needed time to figure out what the Margin of Error is. See individual file for more details.)
+-- Niels: 60m
+
 -- Exercise 2
 -- We used the Exercise of Niels because he used property functions to check the properties 
 -- of a triangle
@@ -110,6 +116,20 @@ exerciseTwo = do
 -- Rectangular and Other are not possible with quickCheck, these triangles have properties that cannot
 -- be checked with random numbers
 
+-- output:
+-- *Lab2> exerciseTwo 
+-- +++ OK, passed 100 tests.
+-- +++ OK, passed 100 tests.
+-- +++ OK, passed 100 tests.
+-- True
+-- True
+
+-- time taken:
+-- Arjan: 10m
+-- Constantijn: ??m
+-- Michael: 30m
+-- Niels: 40m
+
 -- Exercise 3
 -- We used Arjans exercise 3a, because he displayed a list of results
 -- We used Michaels exercise 3b, because he used the least amount of code to implement it
@@ -138,6 +158,12 @@ sortProp (_,f) (_,f') | stronger [(-10)..10] f f' = LT
                       | otherwise = EQ
 
 exerciseThreeB = putStrLn $ show $ map (\(x,y) -> x) (sortBy sortProp [(1, e1), (2, e2), (3, e3), (4, e4)])
+
+-- time taken:
+-- Arjan: 45m
+-- Constantijn: 5m
+-- Michael: 30m
+-- Niels: 15m
 
 -- Exercise 4
 -- We used the implementation of Constantijn for this exercise because he had the most efficient code
@@ -169,6 +195,18 @@ instance Arbitrary RandomIntListSmall where
 exerciseFour = do 
                  print $ show $ permTest1 && permTest2 && permTest3 && not permTest4
                  quickCheckResult (\ (RandomIntListSmall xs) -> (and (map (isPermutation xs) (permutations xs))))
+
+-- output:
+-- *Lab2> exerciseFour 
+-- "True"
+-- +++ OK, passed 100 tests.
+-- Success {numTests = 100, labels = [], output = "+++ OK, passed 100 tests.\n"}
+
+-- time taken:
+-- Arjan: 35m
+-- Constantijn: 5m
+-- Michael: 30m
+-- Niels: 15m
 
 -- Exercise 5
 -- We used the implementation of Niels because he had the most compact code
@@ -206,6 +244,17 @@ exerciseFive = do
 
 -- Our answer would be that while technically possible, you shouldn't automate this test and instead use known values to test the function.
 
+-- output:
+-- *Lab2> exerciseFive
+-- Passed
+-- Passed
+
+-- time taken:
+-- Arjan: 90m
+-- Constantijn: 7m
+-- Michael: 150m (wasted time by making my own sort function for sorting the properties)
+-- Niels: 35m
+
 -- Exercise 6
 -- We used the exercise of Constantijn because the exercises were very simular but he created
 -- The best tests
@@ -238,6 +287,12 @@ exerciseSix = do
                quickCheckResult (\ (RandomString xs) -> prop_selfInverse xs)
                quickCheckResult (\ (RandomString xs) -> prop_affect xs)
                quickCheckResult (\ (RandomString xs) -> prop_nonAffect xs)
+
+-- time taken:
+-- Arjan: ??m
+-- Constantijn: 35m
+-- Michael: 90m
+-- Niels: 60m
 
 -- Exercise 7
 -- We used the exercise of Constantijn because he had the cleanest code and supported the most countries
@@ -289,6 +344,17 @@ ibanTest = and (map ibanValidation testSetTrue) && and (map not (map ibanValidat
 -- It is possible to automate the test process by generating random valid
 -- and invalid IBANs. Generating valid IBANs can be done by using the
 -- requierements...
+
+-- output:
+-- *Lab2> ibanTest 
+-- True
+
+
+-- time taken:
+-- Arjan: ??m
+-- Constantijn: 30m
+-- Michael: 30m (didn't finish the exercise)
+-- Niels: 45m (didn't finish the exercise)
 
 -- Euler 7
 prime :: Integer -> Bool
