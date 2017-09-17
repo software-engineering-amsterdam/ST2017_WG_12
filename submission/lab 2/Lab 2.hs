@@ -289,7 +289,7 @@ exerciseSix = do
                quickCheckResult (\ (RandomString xs) -> prop_nonAffect xs)
 
 -- time taken:
--- Arjan: ??m
+-- Arjan: 30m
 -- Constantijn: 35m
 -- Michael: 90m
 -- Niels: 60m
@@ -351,7 +351,7 @@ ibanTest = and (map ibanValidation testSetTrue) && and (map not (map ibanValidat
 
 
 -- time taken:
--- Arjan: ??m
+-- Arjan: 40m
 -- Constantijn: 30m
 -- Michael: 30m (didn't finish the exercise)
 -- Niels: 45m (didn't finish the exercise)
