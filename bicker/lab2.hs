@@ -45,7 +45,7 @@ prop_list_values_offset (h:t) x y
 
 -- quickCheckResult (\(Positive n) -> prop_list_values_offset (quartiles_dist (probs n)) (div n 4) 0.01)
 
--- Exercise 2 ()
+-- Exercise 2 (15 minutes)
 
 data Shape = NoTriangle | Equilateral | Isosceles
     | Rectangular | Other deriving (Eq,Show)
@@ -76,7 +76,7 @@ workshop3c x = (even x && x > 3) || even x
 
 -- stronger [-10..10] workshop3a workshop3b
 
--- Exercise 4 (5 minutes)
+-- Exercise 4 (15 minutes)
 
 isPermutation, isPermutation' :: Eq a => [a] -> [a] -> Bool
 isPermutation listA listB
@@ -200,5 +200,7 @@ ibanTest = and (map ibanValidation testSetTrue) && and (map not (map ibanValidat
         testSetFalse = ["BE6251000754706", "BE62510007547062", "BX62510007547062", "IT40S0542811101000000123459", "ZT40S0542811101000000123456"]
 
 -- It is possible to automate the test process by generating random valid
--- and invalid IBANs. Generating valid IBANs can be done by using the
--- requierements...
+-- and invalid IBANs. However this would need to be tested as well which
+-- would be done using a validator similar to what needs to be tested in the
+-- first place. This results circular reasoning so it is probably better
+-- to use known test sets like shown above but much larger.

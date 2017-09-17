@@ -64,7 +64,7 @@ exerciseOne = quickCheckResult (\(NonNegativeLarge x) -> check x)
 --        [2560,  2478, 2440, 2522]
 -- TOTAL: [10059, 9981, 9918, 10042]
 -- There are no big differences over the sum of four test,
--- But in this test set there is a bigger chance that a number 
+-- But in this test set there is a bigger chance that a number
 -- falls in the first or the last quartile
 
 -- Resulst of a test with more numbers:
@@ -83,7 +83,7 @@ exerciseOne = quickCheckResult (\(NonNegativeLarge x) -> check x)
 -- Niels: 60m
 
 -- Exercise 2
--- We used the Exercise of Niels because he used property functions to check the properties 
+-- We used the Exercise of Niels because he used property functions to check the properties
 -- of a triangle
 -- We used the Tests of Constantijn because he used quickCheck for the test
 -- We used the limited tests of Michael because he created the tests for the exceptions
@@ -92,7 +92,7 @@ data Shape = NoTriangle | Equilateral | Isosceles
     | Rectangular | Other deriving (Eq,Show)
 
 triangle :: Integer -> Integer -> Integer -> Shape
-triangle x y z | prop_no_triangle x y z = NoTriangle 
+triangle x y z | prop_no_triangle x y z = NoTriangle
                | prop_equilateral x y z = Equilateral
                | prop_rectangular x y z = Rectangular
                | prop_isosceles x y z = Isosceles
@@ -109,15 +109,15 @@ exerciseTwo = do
                 quickCheckResult (\ (Positive n) -> triangle n n n == Equilateral)
                 quickCheckResult (\ (Positive a) -> triangle a a (a + a) == Isosceles)
                 let rectangulars = [(3,4,5), (3,5,4), (4,5,3), (5,13,12), (5,12,13)]
-                let others = [(2,3,4), (3,2,4), (4,3,2)] 
+                let others = [(2,3,4), (3,2,4), (4,3,2)]
                 putStrLn $ show $ all (\(a, b, c) -> triangle a b c == Rectangular) rectangulars
                 putStrLn $ show $ all (\(a, b, c) -> triangle a b c == Other) others
-                
+
 -- Rectangular and Other are not possible with quickCheck, these triangles have properties that cannot
 -- be checked with random numbers
 
 -- output:
--- *Lab2> exerciseTwo 
+-- *Lab2> exerciseTwo
 -- +++ OK, passed 100 tests.
 -- +++ OK, passed 100 tests.
 -- +++ OK, passed 100 tests.
@@ -126,7 +126,7 @@ exerciseTwo = do
 
 -- time taken:
 -- Arjan: 10m
--- Constantijn: ??m
+-- Constantijn: 15m
 -- Michael: 30m
 -- Niels: 40m
 
@@ -161,7 +161,7 @@ exerciseThreeB = putStrLn $ show $ map (\(x,y) -> x) (sortBy sortProp [(1, e1), 
 
 -- time taken:
 -- Arjan: 45m
--- Constantijn: 5m
+-- Constantijn: 15m
 -- Michael: 30m
 -- Niels: 15m
 
@@ -192,12 +192,12 @@ data RandomIntListSmall = RandomIntListSmall [Int] deriving Show
 instance Arbitrary RandomIntListSmall where
     arbitrary = fmap RandomIntListSmall (sublistOf [1..10])
 
-exerciseFour = do 
+exerciseFour = do
                  print $ show $ permTest1 && permTest2 && permTest3 && not permTest4
                  quickCheckResult (\ (RandomIntListSmall xs) -> (and (map (isPermutation xs) (permutations xs))))
 
 -- output:
--- *Lab2> exerciseFour 
+-- *Lab2> exerciseFour
 -- "True"
 -- +++ OK, passed 100 tests.
 -- Success {numTests = 100, labels = [], output = "+++ OK, passed 100 tests.\n"}
@@ -342,11 +342,13 @@ ibanTest = and (map ibanValidation testSetTrue) && and (map not (map ibanValidat
         testSetFalse = ["BE6251000754706", "BE62510007547062", "BX62510007547062", "IT40S0542811101000000123459", "ZT40S0542811101000000123456"]
 
 -- It is possible to automate the test process by generating random valid
--- and invalid IBANs. Generating valid IBANs can be done by using the
--- requierements...
+-- and invalid IBANs. However this would need to be tested as well which
+-- would be done using a validator similar to what needs to be tested in the
+-- first place. This results circular reasoning so it is probably better
+-- to use known test sets like shown above but much larger.
 
 -- output:
--- *Lab2> ibanTest 
+-- *Lab2> ibanTest
 -- True
 
 
