@@ -43,10 +43,16 @@ exerciseTwoTestOne = do
 
 
 -- Exercise 4
--- Inspiration for random: https://www.vex.net/~trebla/haskell/random.xhtml
--- This generator starts by generating a random sequence of numbers 
--- which is of variable length. After that it will add a variable and operator
--- depending on the random value.
+-- Inspiration for random function: https://www.vex.net/~trebla/haskell/random.xhtml
+-- This function generates a formula based on a list of lists of Integers. Every element of this
+-- list of intgers should always contain three elements. 
+-- 0: Integer which determines which opperator will be used.         (1-5)
+-- 1: Integer which represents a variable							 (0-n)
+-- 2: This Integer determines if the 'tree' should go left or right. (0-1)
+
+
+
+
 formulaGenerator :: [[Int]] -> String -> String
 formulaGenerator (y:ys) x | y !! 0 == 1 && y !! 2 == 0 = formulaGenerator ys ("*(" ++ show (y !! 1) ++ " " ++ x ++ ")")
                           | y !! 0 == 1 && y !! 2 == 1 = formulaGenerator ys ("*(" ++ x ++ " " ++ show (y !! 1) ++ ")")
@@ -72,8 +78,9 @@ randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
 toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
-exerciseFourTests = do opp <- randomSequenceN 50 1 5
-                       vars <- randomSequenceN 50 0 10
-                       coins <- randomSequenceN 50 0 1
+exerciseFourTests = do let n = 50
+                       opp <- randomSequenceN n 1 5
+                       vars <- randomSequenceN n 0 10
+                       coins <- randomSequenceN n 0 1
                        print $ formulaGenerator (toTuples opp vars coins) "0"
                        print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
