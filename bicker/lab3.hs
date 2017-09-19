@@ -22,24 +22,34 @@ entails p q = and (map (\ v -> evl v q) (filter (\ v -> evl v p) (allVals p)))
 
 -- | logical equivalence
 equiv :: Form -> Form -> Bool
-equiv p q = all (\ v -> evl v p) (allVals p) == all (\ v -> evl v q) (allVals q)
+equiv p q = l && r
+    where
+        l = and (map (\ v -> (evl v p) == (evl v q)) (allVals p))
+        r = and (map (\ v -> (evl v p) == (evl v q)) (allVals q))
 
 -- Exercise 2 (5 minutes)
 
--- Exercise 3 (100 minutes)
-toCNF :: Form -> Form
-toCNF (Impl p q) = toCNF (Dsj [Neg p, q])
-toCNF (Equiv p q) = toCNF (Dsj [Cnj [p, q], Cnj [Neg p, Neg q]])
+-- Exercise 3 (130 minutes)
+cnf :: Form -> Form
+cnf (Prop p) = Prop p
 
-toCNF (Cnj [p, q]) = Cnj [toCNF p, toCNF q]
-toCNF (Dsj [p, q]) = Dsj [toCNF p, toCNF q]
+cnf (Cnj [p, q]) = Cnj [cnf p, cnf q]
+cnf (Dsj [p, q]) = Dsj [cnf p, cnf q]
 
-toCNF (Neg (Cnj [p, q])) = Dsj [toCNF (Neg p), toCNF (Neg q)]
-toCNF (Neg (Dsj [p, q])) = Cnj [toCNF (Neg p), toCNF (Neg q)]
-toCNF (Neg (Neg p)) = toCNF p
-toCNF (Neg (Prop p)) = Neg (Prop p)
+cnf (Neg (Neg p)) = cnf p
+cnf (Neg (Cnj [p, q])) = Dsj [cnf (Neg p), cnf (Neg q)]
+cnf (Neg (Dsj [p, q])) = Cnj [cnf (Neg p), cnf (Neg q)]
 
-toCNF (Prop p) = Prop p
+cnf (Neg (Impl p q)) = cnf (Neg (Dsj [Neg p, q]))
+cnf (Neg (Equiv p q)) = cnf (Neg (Dsj [Cnj [p, q], Cnj [Neg p, Neg q]]))
+
+cnf (Neg p) = Neg (cnf p)
+
+cnf (Impl p q) = cnf (Dsj [Neg p, q])
+cnf (Equiv p q) = cnf (Dsj [Cnj [p, q], Cnj [Neg p, Neg q]])
+
+cnfx :: Form -> Form
+cnfx = nnf . arrowfree
 
 isCNF, isClause, isLiteral :: Form -> Bool
 isCNF (Cnj [p, q]) = isClause p && isCNF q
@@ -67,9 +77,10 @@ formula' n | n > 0 =
            liftM2 Equiv subformula2 subformula2]
     where
         subformula1 = formula' (n - 1)
-        subformula2 = formula' (div n 2)
+        subformula2 = formula' (div n 2) -- TODO needs more random
 
--- quickCheck $ forAll formula (\ f -> isCNF (toCNF f))
+-- quickCheck $ forAll formula (\ f -> isCNF (cnf f))
+-- forAll formula (\ f -> (nnf $ arrowfree f) == (cnf f))
 
 -- +(+(3 0) (2==>-1))
 
