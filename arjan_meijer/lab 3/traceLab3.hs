@@ -69,6 +69,28 @@ validCnj :: [Form] -> [Form]
 validCnj fs | contradiction (Cnj fs) = [fFalse (head fs)]
             | otherwise = fs
 
+
+formulaGenerator :: [Int] -> String -> String
+formulaGenerator (y:ys) x | y == 1 = formulaGenerator ys ("*(1 " ++ x ++ ")")
+                          | y == 2 = formulaGenerator ys ("+(2 " ++ x ++ ")")
+                          | y == 3 = formulaGenerator ys ("-" ++ x )
+                          | y == 4 = formulaGenerator ys ("(3 ==> " ++ x ++ ")")
+                          | y == 5 = formulaGenerator ys ("(3 <=> " ++ x ++ ")")
+                          | otherwise = formulaGenerator ys x
+formulaGenerator [] x = x
+
+generateFormula = do s <- randomSequence
+                     print $ formulaGenerator s "0" 
+
+-- This functions generates a random sequence of Ints
+randomSequence :: IO [Int]
+randomSequence =
+    do n <- randomRIO (1,1000)
+       sequence (replicate n (randomRIO (1,5)))
+
+exerciseFourTests = do s <- randomSequence
+                       print $ show $ toCNF (head (parse (formulaGenerator s "0")))
+
 cnfTest :: Form -> Bool
 cnfTest f = and (map (\x -> trace(show (evl x f == evl x y) ++ show x) evl x f == evl x y) (allVals f) )where y = toCNF f
 
