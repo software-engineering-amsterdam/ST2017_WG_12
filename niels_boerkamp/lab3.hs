@@ -41,8 +41,17 @@ exerciseOne = do
 exerciseTwoTestOne = do
          parse "*(1 +(2 -3)" == []
 
+-- Exercse 3
+toCNF :: Form -> Form
+toCNF (Impl f1 f2) = toCNF (Dsj [Neg f1, f2]))
+toCNF (Equiv f1 f2) = toCNF (Cnj [Impl f1 f2, Imple f2 f1]]
+toCnf (Dsj fs) = Dsj (map (\x -> ))
 
+		 
+		 
+		 
 -- Exercise 4
+-- 
 -- Inspiration for random function: https://www.vex.net/~trebla/haskell/random.xhtml
 -- This function generates a formula based on a list of lists of Integers. Every element of this
 -- list of intgers should always contain three elements. 
@@ -75,9 +84,13 @@ randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
 toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
-exerciseFour = do let n = 50
-                  opp <- randomSequenceN n 1 5
-                  vars <- randomSequenceN n 0 10
+exerciseFour = do let n = 100
+                  opp <- randomSequenceN n 1 2
+                  vars <- randomSequenceN n 0 3
                   coins <- randomSequenceN n 0 1
                   print $ formulaGenerator (toTuples opp vars coins) "0"
                   print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
+
+
+
+
