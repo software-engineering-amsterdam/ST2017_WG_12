@@ -34,45 +34,45 @@ exerciseOne = do
 -- Time 15:35
 
 toCNF :: Form -> Form
-toCNF (Impl f1 f2) = toCNF (Dsj [(Neg f1),f2])
-toCNF (Equiv f1 f2) = toCNF (Cnj [Impl f1 f2, Impl f2 f1])
-toCNF (Neg (Dsj fs)) = toCNF (Cnj (map (\x -> toCNF(Neg x)) fs))
-toCNF (Neg (Cnj fs)) = toCNF (Dsj (map (\x -> toCNF(Neg x)) fs))
-toCNF (Neg (Neg f)) = toCNF f
-toCNF (Neg (Prop x)) = Neg (Prop x)
-toCNF (Neg f) = toCNF(Neg (toCNF f))
+toCNF (Impl f1 f2) = trace("IMPL " ++ show f1 ++ show f2) toCNF (Dsj [(Neg f1),f2])
+toCNF (Equiv f1 f2) = trace("EQUIV " ++ show f1 ++ show f2) toCNF (Cnj [Impl f1 f2, Impl f2 f1])
+toCNF (Neg (Dsj fs)) = trace("Neg Dsj " ++ show fs) toCNF (Cnj (map (\x -> toCNF(Neg x)) fs))
+toCNF (Neg (Cnj fs)) = trace("Neg Cnj " ++ show fs) toCNF (Dsj (map (\x -> toCNF(Neg x)) fs))
+toCNF (Neg (Neg f)) = trace("Neg Neg " ++ show f) toCNF f
+toCNF (Neg (Prop x)) = trace("Neg Prop " ++ show x)Neg (Prop x)
+toCNF (Neg f) = trace ("Neg " ++ show f) toCNF(Neg (toCNF f))
 toCNF (Cnj fs) | fFalse (head fs) == (Cnj fs) = Cnj fs
-               | otherwise = noSingle (Cnj (map (\x -> toCNF x) (validCnj fs)))
+               | otherwise = trace("Cnj " ++ show fs) noSingle (Cnj (map (\x -> toCNF x) (validCnj fs)))
 toCNF (Dsj fs) | fTrue (head fs) == (Dsj fs) = Dsj fs
-               | otherwise = noSingle (Dsj(parseDsj ((map (\x -> toCNF x) (parseDsj fs)))))
-toCNF f | contradiction f = fFalse f
-        | tautology f = fTrue f
-        | otherwise = f
+               | otherwise = trace("Dsj " ++ show fs) noSingle (Dsj(parseDsj ((map (\x -> toCNF x) (parseDsj fs)))))
+toCNF f | contradiction f = trace("Con " ++ show f) fFalse f
+        | tautology f = trace("Taut " ++ show f) fTrue f
+        | otherwise = trace("Prop " ++ show f) f
 
 parseDsj :: [Form] -> [Form]
-parseDsj fs = concat (map (\x -> pdsj x) fs)
+parseDsj fs = trace("PARSEDSJ " ++ show fs)concat (map (\x -> pdsj x) fs)
               where 
-               pdsj (Dsj fs) =fs
-               pdsj f = [toCNF f]
+               pdsj (Dsj fs) = trace("FOUND DSJ" ++ show fs)fs
+               pdsj f = trace("OTHER IN PARSE " ++ show f)[toCNF f]
 
 fFalse, fTrue :: Form -> Form
 fFalse f = Cnj [x, Neg x] where x = Prop (head (propNames f))
 fTrue f = Dsj [x, Neg x] where x = Prop (head (propNames f))
 
 noSingle :: Form -> Form
-noSingle (Cnj fs) | length fs == 1 = head fs
-                  | otherwise = Cnj fs
-noSingle (Dsj fs) | length fs == 1 = head fs
-                  | otherwise = Dsj fs
+noSingle (Cnj fs) | length fs == 1 = trace("SINGLE VAL " ++ show fs) head fs
+                  | otherwise = trace("NONSINGLE") Cnj fs
+noSingle (Dsj fs) | length fs == 1 = trace("SINGLE VAL " ++ show fs)head fs
+                  | otherwise = trace("NONSINGLE") Dsj fs
 
 validCnj :: [Form] -> [Form]
 validCnj fs | contradiction (Cnj fs) = [fFalse (head fs)]
             | otherwise = fs
 
 cnfTest :: Form -> Bool
-cnfTest f = (and (map (\x -> evl x f == evl x y) (allVals f))) && not (isInfixOf "==>" (show y)) && not (isInfixOf "<=>" (show y)) where y = toCNF f
+cnfTest f = and (map (\x -> trace(show (evl x f == evl x y) ++ show x) evl x f == evl x y) (allVals f) )where y = toCNF f
 
--- CREDITS: MICHEAL
+-- CREDITS MICHEAL
 -- inspiration http://www.cse.chalmers.se/~rjmh/QuickCheck/manual_body.html#16
 form' :: Int -> Gen Form
 form' 0 = liftM Prop arbitrary
@@ -82,7 +82,7 @@ form' n | n > 0 = oneof [liftM Prop arbitrary, liftM Neg subform,
             where subform = form' (div n 2)
 
 
-testGen = resize 10 $ sized form'
+testGen = sized form'
 
 
 --main = quickCheck $ forAll testGen (\x -> satisfiable x)
