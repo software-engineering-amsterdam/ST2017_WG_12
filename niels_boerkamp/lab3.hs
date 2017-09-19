@@ -33,3 +33,54 @@ exerciseOne = do
 
 -- Exercise 2
 -- xx minutes
+
+-- Test 1:  parse "*(1 +(2 -3)"
+-- Testresult: []
+-- This test fails since the parentheses aren't used correctly. In this case
+-- they are opend twice and only closed once.
+exerciseTwoTestOne = do
+         parse "*(1 +(2 -3)" == []
+
+
+-- Exercise 4
+-- Inspiration for random: https://www.vex.net/~trebla/haskell/random.xhtml
+-- This generator starts by generating a random sequence of numbers 
+-- which is of variable length. After that it will add a variable and operator
+-- depending on the random value.
+formulaGenerator :: [Int] -> String -> String
+formulaGenerator (y:ys) x | y == 1 = formulaGenerator ys ("*(1 " ++ x ++ ")")
+                          | y == 2 = formulaGenerator ys ("+(2 " ++ x ++ ")")
+                          | y == 3 = formulaGenerator ys ("-" ++ x )
+                          | y == 4 = formulaGenerator ys ("(3 ==> " ++ x ++ ")")
+                          | y == 5 = formulaGenerator ys ("(3 <=> " ++ x ++ ")")
+                          | otherwise = formulaGenerator ys x
+formulaGenerator [] x = x
+
+generateFormula = do s <- randomSequence
+                     print $ formulaGenerator s "0" 
+
+-- This functions generates a random sequence of Ints
+randomSequence :: IO [Int]
+randomSequence =
+    do n <- randomRIO (1,1000)
+       sequence (replicate n (randomRIO (1,5)))
+
+--randomSequenceN :: Int -> Int -> Int -> IO [Int]
+--randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
+
+
+--toTuples :: IO [Int] -> IO [Int] -> IO [(Int, Int)]
+--toTuples xs ys = zipWith (\ x y -> (x, y)) xs ys
+
+--randomTuples :: Int -> [(Int, Int)]
+--randomTuples n = toTuples opp vars
+--                 where opp = randomSequenceN n 0 5
+--				       vars = randomSequenceN n 0 3
+
+
+-- Tests
+-- Try to parse the generated formulas.
+exerciseFourTests = do s <- randomSequence
+                       print $ formulaGenerator s "0" 
+                       print $ parse (formulaGenerator s "0")
+
