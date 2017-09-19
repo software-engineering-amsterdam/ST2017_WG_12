@@ -50,9 +50,6 @@ exerciseTwoTestOne = do
 -- 1: Integer which represents a variable							 (0-n)
 -- 2: This Integer determines if the 'tree' should go left or right. (0-1)
 
-
-
-
 formulaGenerator :: [[Int]] -> String -> String
 formulaGenerator (y:ys) x | y !! 0 == 1 && y !! 2 == 0 = formulaGenerator ys ("*(" ++ show (y !! 1) ++ " " ++ x ++ ")")
                           | y !! 0 == 1 && y !! 2 == 1 = formulaGenerator ys ("*(" ++ x ++ " " ++ show (y !! 1) ++ ")")
@@ -78,9 +75,9 @@ randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
 toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
-exerciseFourTests = do let n = 50
-                       opp <- randomSequenceN n 1 5
-                       vars <- randomSequenceN n 0 10
-                       coins <- randomSequenceN n 0 1
-                       print $ formulaGenerator (toTuples opp vars coins) "0"
-                       print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
+exerciseFour = do let n = 50
+                  opp <- randomSequenceN n 1 5
+                  vars <- randomSequenceN n 0 10
+                  coins <- randomSequenceN n 0 1
+                  print $ formulaGenerator (toTuples opp vars coins) "0"
+                  print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
