@@ -47,40 +47,33 @@ exerciseTwoTestOne = do
 -- This generator starts by generating a random sequence of numbers 
 -- which is of variable length. After that it will add a variable and operator
 -- depending on the random value.
-formulaGenerator :: [Int] -> String -> String
-formulaGenerator (y:ys) x | y == 1 = formulaGenerator ys ("*(1 " ++ x ++ ")")
-                          | y == 2 = formulaGenerator ys ("+(2 " ++ x ++ ")")
-                          | y == 3 = formulaGenerator ys ("-" ++ x )
-                          | y == 4 = formulaGenerator ys ("(3 ==> " ++ x ++ ")")
-                          | y == 5 = formulaGenerator ys ("(3 <=> " ++ x ++ ")")
+formulaGenerator :: [[Int]] -> String -> String
+formulaGenerator (y:ys) x | y !! 0 == 1 && y !! 2 == 0 = formulaGenerator ys ("*(" ++ show (y !! 1) ++ " " ++ x ++ ")")
+                          | y !! 0 == 1 && y !! 2 == 1 = formulaGenerator ys ("*(" ++ x ++ " " ++ show (y !! 1) ++ ")")
+
+                          | y !! 0 == 2 && y !! 2 == 0 = formulaGenerator ys ("+(" ++ x ++ " " ++ show (y !! 1) ++ ")")
+                          | y !! 0 == 2 && y !! 2 == 1 = formulaGenerator ys ("+(" ++ show (y !! 1) ++ " " ++ x ++ ")")
+
+                          | y !! 0 == 3 = formulaGenerator ys ("-" ++ x )
+
+                          | y !! 0 == 4 && y !! 2 == 0 = formulaGenerator ys ("("++ show (y !! 1) ++ " ==> " ++ x ++ ")")
+                          | y !! 0 == 4 && y !! 1 == 0 = formulaGenerator ys ("("++ x ++ " ==> " ++ show (y !! 1) ++ ")")
+
+                          | y !! 0 == 5 && y !! 2 == 0 = formulaGenerator ys ("(" ++ x ++ " <=> " ++ show (y !! 1) ++")")
+                          | y !! 0 == 5 && y !! 1 == 0 = formulaGenerator ys ("(" ++ show (y !! 1) ++" <=> " ++ x ++ ")")
+ 
                           | otherwise = formulaGenerator ys x
 formulaGenerator [] x = x
 
-generateFormula = do s <- randomSequence
-                     print $ formulaGenerator s "0" 
-
 -- This functions generates a random sequence of Ints
-randomSequence :: IO [Int]
-randomSequence =
-    do n <- randomRIO (1,1000)
-       sequence (replicate n (randomRIO (1,5)))
+randomSequenceN :: Int -> Int -> Int -> IO [Int]
+randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 
---randomSequenceN :: Int -> Int -> Int -> IO [Int]
---randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
+toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
+toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
-
---toTuples :: IO [Int] -> IO [Int] -> IO [(Int, Int)]
---toTuples xs ys = zipWith (\ x y -> (x, y)) xs ys
-
---randomTuples :: Int -> [(Int, Int)]
---randomTuples n = toTuples opp vars
---                 where opp = randomSequenceN n 0 5
---				       vars = randomSequenceN n 0 3
-
-
--- Tests
--- Try to parse the generated formulas.
-exerciseFourTests = do s <- randomSequence
-                       print $ formulaGenerator s "0" 
-                       print $ parse (formulaGenerator s "0")
-
+exerciseFourTestsb = do opp <- randomSequenceN 50 1 5
+                        vars <- randomSequenceN 50 0 10
+                        coins <- randomSequenceN 50 0 1
+                        print $ formulaGenerator (toTuples opp vars coins) "0"
+                        print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
