@@ -72,8 +72,8 @@ randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
 toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
-exerciseFourTestsb = do opp <- randomSequenceN 50 1 5
-                        vars <- randomSequenceN 50 0 10
-                        coins <- randomSequenceN 50 0 1
-                        print $ formulaGenerator (toTuples opp vars coins) "0"
-                        print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
+exerciseFourTests = do opp <- randomSequenceN 50 1 5
+                       vars <- randomSequenceN 50 0 10
+                       coins <- randomSequenceN 50 0 1
+                       print $ formulaGenerator (toTuples opp vars coins) "0"
+                       print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
