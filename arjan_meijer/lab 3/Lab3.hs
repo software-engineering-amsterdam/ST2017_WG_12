@@ -41,11 +41,11 @@ exerciseOne = do
 --  The parse method should return an empty array is the
 --  input was invalid
 
+validInput :: String
+validInput = "-0"
+
 invalidInput :: String
 invalidInput = "(x)"
-
-validInput :: String
-validInput = "+(1 2)"
 
 testParseInput :: [Integer] -> Bool
 testParseInput (x:xs) | x == 0 = parse (validInput) /= [] && testParseInput xs
@@ -57,10 +57,60 @@ reflexiveParse s = show (parse (show (parse s))) == s
 
 testParse :: Bool
 testParse = True
-   
+
+
+-- CREDITS: NIELS
+formulaGenerator :: [[Int]] -> String -> String
+formulaGenerator (y:ys) x | y !! 0 == 1 && y !! 2 == 0 = formulaGenerator ys ("*(" ++ show (y !! 1) ++ " " ++ x ++ ")")
+                          | y !! 0 == 1 && y !! 2 == 1 = formulaGenerator ys ("*(" ++ x ++ " " ++ show (y !! 1) ++ ")")
+
+                          | y !! 0 == 2 && y !! 2 == 0 = formulaGenerator ys ("+(" ++ x ++ " " ++ show (y !! 1) ++ ")")
+                          | y !! 0 == 2 && y !! 2 == 1 = formulaGenerator ys ("+(" ++ show (y !! 1) ++ " " ++ x ++ ")")
+
+                          | y !! 0 == 3 = formulaGenerator ys ("-" ++ x )
+
+                          | y !! 0 == 4 && y !! 2 == 0 = formulaGenerator ys ("("++ show (y !! 1) ++ " ==> " ++ x ++ ")")
+                          | y !! 0 == 4 && y !! 1 == 0 = formulaGenerator ys ("("++ x ++ " ==> " ++ show (y !! 1) ++ ")")
+
+                          | y !! 0 == 5 && y !! 2 == 0 = formulaGenerator ys ("(" ++ x ++ " <=> " ++ show (y !! 1) ++")")
+                          | y !! 0 == 5 && y !! 1 == 0 = formulaGenerator ys ("(" ++ show (y !! 1) ++" <=> " ++ x ++ ")")
+ 
+                          | otherwise = formulaGenerator ys x
+formulaGenerator [] x = x
+
+-- This functions generates a random sequence of Ints
+randomSequenceN :: Int -> Int -> Int -> IO [Int]
+randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
+
+toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
+toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
+
+exerciseFour = do let n = 50
+                  opp <- randomSequenceN n 1 5
+                  vars <- randomSequenceN n 0 10
+                  coins <- randomSequenceN n 0 1
+                  print $ formulaGenerator (toTuples opp vars coins) "0"
+                  print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
+
+
 
 -- Exercise 3
 -- Time 300 Minutes
+
+tCNF :: Form -> Form
+tCNF (Impl f1 f2) = tCNF (Dsj [Neg f1, f2])
+tCNF (Equiv f1 f2) = tCNF (Cnj [Impl f1 f2, Impl f2 f1])
+tCNF (Dsj fs) = Dsj (map (\x -> tCNF x) fs)
+tCNF (Cnj fs) = Cnj (map (\x -> tCNF x) fs)
+tCNF (Neg (Dsj fs)) = tCNF (Cnj (map (\x -> tCNF(Neg x)) fs))
+tCNF (Neg (Cnj fs)) = tCNF (Dsj (map (\x -> tCNF(Neg x)) fs))
+tCNF (Neg (Neg f)) = tCNF f
+tCNF (Neg (Prop x)) = Neg (Prop x)
+tCNF (Neg f) = tCNF(Neg (tCNF f))
+tCNF f = f
+
+--flatten :: Form -> Form
+--flatten (Dsj fs) = fla
 
 toCNF :: Form -> Form
 toCNF (Impl f1 f2) = toCNF (Dsj [(Neg f1),f2])
