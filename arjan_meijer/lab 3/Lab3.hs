@@ -162,3 +162,30 @@ testGen = resize 10 $ sized form'
 --main = quickCheck $ forAll testGen (\x -> satisfiable x)
 exerciseThree = do
                   quickCheck $ forAll testGen (\x -> cnfTest x)
+cnfER :: String -> Form
+cnfER f = recF (simplefyDsj (parse f))
+
+smp :: Form -> Form
+smp (Cnj fs) = Cnj (map (\x -> Dsj(simplefyDsj (d x))) fs) where
+    d (Dsj fs) = fs
+    d _ = []
+smp _ = Cnj []
+
+simplefyDsj :: [Form] -> [Form]
+simplefyDsj ((Dsj fs):xs) = trace ("dsj : xs") simplefyDsj (xs ++ fs)
+simplefyDsj (x:xs) | elem x xs = simplefyDsj xs
+                   | otherwise = x:(simplefyDsj xs)
+simplefyDsj [] = trace ("empty")[]
+
+recF :: [Form] -> Form
+recF (x:y:xs) = trace(show x ++ show y ++ show xs) recF ((combineF x y):xs)
+recF (x:[]) = trace( show x) x
+recF _ = error "Invalid"
+
+-- No disjunctions allowed
+combineF :: Form -> Form -> Form
+combineF (Prop x) (Prop y) = Cnj [Dsj[Prop x, Prop y]]
+combineF (Prop x) (Cnj fs) = Cnj (map (\f -> Dsj [Prop x, f]) fs)
+combineF (Cnj fs) (Prop x) = Cnj (map (\f -> Dsj [Prop x, f]) fs)
+combineF (Cnj fs) (Cnj xs) = Cnj (concat (map (\f -> (map (\x -> Dsj [f, x]) xs)) fs))
+combineF _ _ = error "No pattern matched"

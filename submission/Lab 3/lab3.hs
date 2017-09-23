@@ -163,3 +163,100 @@ exerciseThree = do
 -- Constantijn  50
 -- Niels        270
 -- Arjan        30 - Combined with exercise 3
+
+-- We used the implementations of exercise 4 of Michael and Niels
+-- Niels had a non-quickCheck implementation and Michael had a quickCheck implementation
+
+-- QuickCheck implementation
+-- takes nForms from a filtered list of IO forms.
+filterOnNProps :: Int -> Int -> IO [Form] -> IO [Form]
+filterOnNProps nForms nProps forms = do
+    forms' <- forms
+    return $ take nForms $ filter (\x -> length (propNames x) == nProps) forms'
+
+-- Generate exactly nForms amount of Forms, all with exactly nProps.
+-- I would've liked to use the repeat function here, but the sequence function in filterOnNProps evaluates the entire list.
+genWithExactlyNProps :: Int -> Int -> IO [Form]
+genWithExactlyNProps nForms nProps = filterOnNProps nForms nProps $ genN (nForms*50) (formNGen nProps 30)
+
+-- properties to test the generators themselves
+
+-- The formGen generator only rarily generates non-satisfiable forms.
+prop_generatesMostlySatisfiableForms ::  Property
+prop_generatesMostlySatisfiableForms = monadicIO $ do
+    s <- run $ genN 50 formGen
+    assert $ length (filter satisfiable s) > 48
+
+prop_neverMoreThanNProps ::  Property
+prop_neverMoreThanNProps = monadicIO $ do
+    s <- run $ genN 5000 (formNGen 5 30)
+    assert $ all (\x -> length (propNames x) <= 5) s
+
+prop_exactlyNProps :: Property
+prop_exactlyNProps = monadicIO $ do
+    s <- run $ genWithExactlyNProps 5000 5
+    assert $ length s == 5000 && all (\x -> length (propNames x) == 5) s
+
+-- properties to test exercise 3
+
+exerciseFourQuickCheck = do
+    print "QuickCheck running, this may take a while - three tests"
+    quickCheck prop_generatesMostlySatisfiableForms
+    quickCheck prop_neverMoreThanNProps
+    quickCheck prop_exactlyNProps
+
+
+-- Non-quickcheck implementation
+-- Inspiration for random function: https://www.vex.net/~trebla/haskell/random.xhtml
+-- This function generates a formula based on a list of lists of Integers. Every element of this
+-- list of intgers should always contain three elements. 
+-- 0: Integer which determines which opperator will be used.         (1-5)
+-- 1: Integer which represents a variable							 (0-n)
+-- 2: This Integer determines if the 'tree' should go left or right. (0-1)
+
+formulaGenerator :: [[Int]] -> String -> String
+formulaGenerator (y:ys) x | y !! 0 == 1 && y !! 2 == 0 = formulaGenerator ys ("*(" ++ show (y !! 1) ++ " " ++ x ++ ")")
+                          | y !! 0 == 1 && y !! 2 == 1 = formulaGenerator ys ("*(" ++ x ++ " " ++ show (y !! 1) ++ ")")
+
+                          | y !! 0 == 2 && y !! 2 == 0 = formulaGenerator ys ("+(" ++ x ++ " " ++ show (y !! 1) ++ ")")
+                          | y !! 0 == 2 && y !! 2 == 1 = formulaGenerator ys ("+(" ++ show (y !! 1) ++ " " ++ x ++ ")")
+
+                          | y !! 0 == 3 = formulaGenerator ys ("-" ++ x )
+
+                          | y !! 0 == 4 && y !! 2 == 0 = formulaGenerator ys ("("++ show (y !! 1) ++ " ==> " ++ x ++ ")")
+                          | y !! 0 == 4 && y !! 1 == 0 = formulaGenerator ys ("("++ x ++ " ==> " ++ show (y !! 1) ++ ")")
+
+                          | y !! 0 == 5 && y !! 2 == 0 = formulaGenerator ys ("(" ++ x ++ " <=> " ++ show (y !! 1) ++")")
+                          | y !! 0 == 5 && y !! 1 == 0 = formulaGenerator ys ("(" ++ show (y !! 1) ++" <=> " ++ x ++ ")")
+ 
+                          | otherwise = formulaGenerator ys x
+formulaGenerator [] x = x
+
+-- This functions generates a random sequence of Ints
+randomSequenceN :: Int -> Int -> Int -> IO [Int]
+randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
+
+toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
+toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
+
+-- A cnf form should not change
+prop_unAffected f = toCNF f == f
+
+-- A non cnf from should not change
+prop_Affected f = toCNF f /= f
+
+exerciseFour = do let n = 100
+                  opp <- randomSequenceN n 1 2
+                  vars <- randomSequenceN n 0 3
+                  coins <- randomSequenceN n 0 1
+                  print $ formulaGenerator (toTuples opp vars coins) "0"
+                  print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
+
+-- Exercise 3 tests with the implementation of 4
+exerciseThreeTest = do let n = 4
+                       opp <- randomSequenceN n 1 2
+                       vars <- randomSequenceN n 0 3
+                       coins <- randomSequenceN n 0 1
+                       let form = formulaGenerator (toTuples opp vars coins) "0"
+                       print form
+                       print "4"
