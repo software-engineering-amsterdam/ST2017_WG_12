@@ -36,6 +36,10 @@ main = do
 
 -- time taken: 45m
 
+-- These tests can be automated, but for the sake of brevity/clarity, I only tested a couple of known correct/incorrect values.
+-- Not to mention that automating these would require the generator made in exercise 4.
+
+-- output: 
 -- oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab3$ ghc -O2 exercise1.hs && ./exercise1
 -- [2 of 2] Compiling Main             ( exercise1.hs, exercise1.o )
 -- Linking exercise1 ...
@@ -49,4 +53,6 @@ main = do
 -- True
 -- False
 -- False
+
+-- Conclusion: The functions work correctly for the given forms.
 
