@@ -41,23 +41,35 @@ exerciseOne = do
 --  The parse method should return an empty array is the
 --  input was invalid
 
-validInput :: String
-validInput = "-0"
+ioAnd :: IO Bool -> IO Bool -> IO Bool
+ioAnd a b = do
+              x <- a
+              y <- b
+              return (x && y)
 
-invalidInput :: String
-invalidInput = "(x)"
+validInput = do
+     let n = 50
+     opp <- randomSequenceN n 1 5
+     vars <- randomSequenceN n 0 10
+     coins <- randomSequenceN n 0 1
+     return (formulaGenerator (toTuples opp vars coins) "0")
 
-testParseInput :: [Integer] -> Bool
-testParseInput (x:xs) | x == 0 = parse (validInput) /= [] && testParseInput xs
-                 | otherwise = parse (invalidInput) == [] && testParseInput xs
-testParseInput [] = True
+validParse :: IO String -> IO Bool
+validParse input = do 
+              x <- input
+              return ((show (parse x)) == x)
+
+
+invalidInput :: IO String
+invalidInput = return "(x)"
+
+testParseInput :: [Integer] -> IO Bool
+testParseInput (x:xs) | x == 0 = ioAnd (validParse validInput) (testParseInput xs)
+                      | otherwise = ioAnd (validParse invalidInput) (testParseInput xs)
+testParseInput [] = do return True
 
 reflexiveParse :: String -> Bool
 reflexiveParse s = show (parse (show (parse s))) == s
-
-testParse :: Bool
-testParse = True
-
 
 -- CREDITS: NIELS
 formulaGenerator :: [[Int]] -> String -> String
@@ -85,15 +97,6 @@ randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
 toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
-exerciseFour = do let n = 50
-                  opp <- randomSequenceN n 1 5
-                  vars <- randomSequenceN n 0 10
-                  coins <- randomSequenceN n 0 1
-                  print $ formulaGenerator (toTuples opp vars coins) "0"
-                  print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
-
-
-
 -- Exercise 3
 -- Time 300 Minutes
 
@@ -109,24 +112,14 @@ tCNF (Neg (Prop x)) = Neg (Prop x)
 tCNF (Neg f) = tCNF(Neg (tCNF f))
 tCNF f = f
 
---flatten :: Form -> Form
---flatten (Dsj fs) = fla
-
-toCNF :: Form -> Form
-toCNF (Impl f1 f2) = toCNF (Dsj [(Neg f1),f2])
-toCNF (Equiv f1 f2) = toCNF (Cnj [Impl f1 f2, Impl f2 f1])
-toCNF (Neg (Dsj fs)) = toCNF (Cnj (map (\x -> toCNF(Neg x)) fs))
-toCNF (Neg (Cnj fs)) = toCNF (Dsj (map (\x -> toCNF(Neg x)) fs))
-toCNF (Neg (Neg f)) = toCNF f
-toCNF (Neg (Prop x)) = Neg (Prop x)
-toCNF (Neg f) = toCNF(Neg (toCNF f))
-toCNF (Cnj fs) | fFalse (head fs) == (Cnj fs) = Cnj fs
-               | otherwise = noSingle (Cnj (map (\x -> toCNF x) (validCnj fs)))
-toCNF (Dsj fs) | fTrue (head fs) == (Dsj fs) = Dsj fs
-               | otherwise = noSingle (Dsj(parseDsj ((map (\x -> toCNF x) (parseDsj fs)))))
-toCNF f | contradiction f = fFalse f
-        | tautology f = fTrue f
-        | otherwise = f
+flatten :: Form -> Form
+flatten (Neg (Prop x)) = Neg (Prop x)
+flatten (Neg f) = flatten(Neg (flatten f))
+flatten (Cnj fs) | fFalse (head fs) == (Cnj fs) = Cnj fs
+               | otherwise = noSingle (Cnj (map (\x -> flatten x) (validCnj fs)))
+flatten (Dsj fs) | fTrue (head fs) == (Dsj fs) = Dsj fs
+               | otherwise = noSingle (Dsj(parseDsj ((map (\x -> flatten x) (parseDsj fs)))))
+flatten f = f
 
 parseDsj :: [Form] -> [Form]
 parseDsj fs = concat (map (\x -> pdsj x) fs)
@@ -149,7 +142,7 @@ validCnj fs | contradiction (Cnj fs) = [fFalse (head fs)]
             | otherwise = fs
 
 cnfTest :: Form -> Bool
-cnfTest f = (and (map (\x -> evl x f == evl x y) (allVals f))) && not (isInfixOf "==>" (show y)) && not (isInfixOf "<=>" (show y)) where y = toCNF f
+cnfTest f = (and (map (\x -> evl x f == evl x y) (allVals f))) && not (isInfixOf "==>" (show y)) && not (isInfixOf "<=>" (show y)) where y = tCNF f
 
 -- CREDITS: MICHEAL
 -- inspiration http://www.cse.chalmers.se/~rjmh/QuickCheck/manual_body.html#16
