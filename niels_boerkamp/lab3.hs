@@ -43,15 +43,19 @@ exerciseTwoTestOne = do
 
 -- Exercse 3
 toCNF :: Form -> Form
-toCNF (Impl f1 f2) = toCNF (Dsj [Neg f1, f2]))
-toCNF (Equiv f1 f2) = toCNF (Cnj [Impl f1 f2, Imple f2 f1]]
-toCnf (Dsj fs) = Dsj (map (\x -> ))
+toCNF (Impl f1 f2) = toCNF (Dsj [Neg f1, f2])
+toCNF (Equiv f1 f2) = toCNF (Cnj [Impl f1 f2, Impl f2 f1])
+toCNF (Dsj fs) = Dsj (map (\x -> toCNF x) fs)
+toCNF (Cnj fs) = Cnj (map (\x -> toCNF x) fs)
+toCNF (Neg (Dsj fs)) = toCNF (Cnj (map (\x -> toCNF(Neg x)) fs))
+toCNF (Neg (Cnj fs)) = toCNF (Dsj (map (\x -> toCNF(Neg x)) fs))
+toCNF (Neg (Neg f)) = toCNF f
+toCNF (Neg (Prop x)) = Neg (Prop x)
+toCNF (Neg f) = toCNF(Neg (toCNF f))
+toCNF f = f
 
-		 
-		 
-		 
 -- Exercise 4
--- 
+-- 4 hours 30 minutes
 -- Inspiration for random function: https://www.vex.net/~trebla/haskell/random.xhtml
 -- This function generates a formula based on a list of lists of Integers. Every element of this
 -- list of intgers should always contain three elements. 
@@ -91,6 +95,11 @@ exerciseFour = do let n = 100
                   print $ formulaGenerator (toTuples opp vars coins) "0"
                   print ( "PARSED  " ++ show (parse (formulaGenerator (toTuples opp vars coins) "0")))
 
-
-
-
+-- Exercise 3 tests with the implementation of 4
+exerciseThreeTest = do let n = 4
+                       opp <- randomSequenceN n 1 2
+                       vars <- randomSequenceN n 0 3
+                       coins <- randomSequenceN n 0 1
+                       let form = formulaGenerator (toTuples opp vars coins) "0"
+                       print form
+                       print "4"
