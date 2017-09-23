@@ -15,9 +15,11 @@ contradiction, tautology :: Form -> Bool
 contradiction f = and (map (\ v -> not (evl v f)) (allVals f))
 tautology f = and (map (\v -> evl v f) (allVals f))
 
-entails :: Form -> Form -> Bool
+entails, equiv :: Form -> Form -> Bool
 entails a b = and ( map (\v -> evl (v ++ (fillVals b a)) b) (filter (\v -> evl v a) (allVals a)))
-equiv p q = and (map (\v -> (evl v p) == (evl (v ++ fillVals q p) q)) (allVals p))
+equiv p q = tautology (Equiv p q)
+-- Source: http://people.math.gatech.edu/~ecroot/2406_2012/basic_logic.pdf
+-- equiv is a tautology of an equivalance
 
 fillVals :: Form -> Form -> Valuation
 fillVals a b = map (\x -> (x,False)) (filter (\x -> not (elem x (propNames b))) (propNames a))
