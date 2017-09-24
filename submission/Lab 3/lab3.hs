@@ -1,5 +1,3 @@
-module Lab3 where
-
 import Data.List
 import System.Random
 import Test.QuickCheck
@@ -14,15 +12,24 @@ formNProps maxProp 0 = liftM Prop (choose (1, maxProp))
 formNProps maxProp n | n > 0 = oneof [liftM Prop (choose (1, maxProp)), liftM Neg subform,
                                       liftM Cnj (vectorOf 2 subform), liftM Dsj (vectorOf 2 subform),
                                       liftM2 Impl subform subform, liftM2 Equiv subform subform]
-                               where subform = formNProps maxProp (div n 2)
+                               where subform = formNProps maxProp (n - 1)
+
+formNCnjProps :: Int -> Int -> Gen Form
+formNCnjProps maxProp 0 = liftM Prop (choose (1, maxProp))
+formNCnjProps maxProp n | n > 0 = oneof [liftM Prop (choose (1, maxProp)), liftM Cnj (vectorOf 2 subform)]
+                               where subform = formNCnjProps maxProp (n - 1)
 
 -- Convenience generator for formNGen 1000
 formGen :: Gen Form
-formGen = formNGen 1000 30
+formGen = formNGen 1000 5
 
 -- Generate forms with propositions between [1..n]
 formNGen :: Int -> Int -> Gen Form
 formNGen n x = resize x $ sized (formNProps n)
+
+-- Generate forms that are always in CNF with propositions between [1..n] and forms up to a max of N deep 
+formNCnjGen :: Int -> Int -> Gen Form
+formNCnjGen n x = resize x $ sized (formNCnjProps n)
 
 -- generate N forms with the given generator
 genN :: Int -> Gen Form -> IO [Form]
@@ -31,34 +38,58 @@ genN n gen = sequence $ take n $ repeat $ generate gen
 -- } End of generators
 
 -- Exercise 1
--- Time spent:
+-- Time spent in minutes:
 -- Michael      45
 -- Constantijn  60
 -- Niels        60
 -- Arjan        100
 
 -- We used the exercise of Constantijn because he had the most efficient code
--- We created a new equiv function as a group
+-- We created a new equiv function as a group as well as modified entails
+
+allPropsExistIn :: Form -> Form -> Bool
+allPropsExistIn p q = all (\p' -> elem p' (propNames q)) (propNames p)
 
 contradiction, tautology :: Form -> Bool
 contradiction = not . satisfiable
 tautology f = all (\ v -> evl v f) (allVals f)
 
 entails, equiv :: Form -> Form -> Bool
-entails p q = and (map (\ v -> evl v q) (filter (\ v -> evl v p) (allVals p)))
+entails p q = allPropsExistIn p q && and (map (\ v -> evl v q) (filter (\ v -> evl v p) (allVals p)))
 
 equiv p q = tautology (Equiv p q)
 -- Source: http://people.math.gatech.edu/~ecroot/2406_2012/basic_logic.pdf
 -- equiv is a tautology of an equivalance
 
 exerciseOne = do
-    print $ contradiction $ Cnj [Prop 1, Neg (Prop 1)]
-    print $ tautology $ Dsj [Prop 1, Neg (Prop 1)]
-    print $ entails p (Cnj [p, q])
-    print $ equiv (Impl p q) (Dsj [Neg p, q])
+    print "Exercise one"
+    print $ contradiction $ Cnj [Prop 1, Neg (Prop 1)] -- true
+    print $ contradiction $ Prop 1 -- false
+    print $ tautology $ Dsj [Prop 1, Neg (Prop 1)] -- true
+    print $ tautology $ Prop 1 -- false
+    print $ entails (Cnj [Prop 1,Prop 2]) (Dsj [Prop 1, Prop 2]) -- true
+    print $ entails (Prop 1) (Prop 2) -- false
+    print $ entails (Impl (Prop 1) (Prop 2)) (Impl (Prop 2) (Prop 1)) -- false
+    print $ equiv (Neg (Cnj [Prop 1, Prop 2])) (Dsj [Neg (Prop 1), Neg (Prop 2)]) -- true
+    print $ equiv (Prop 1) (Prop 2) -- false
+    print $ equiv (Cnj [Prop 1, Prop 2]) (Dsj [Prop 1, Prop 2]) -- false
+
+-- output:
+-- "Exercise one"
+-- True
+-- False
+-- True
+-- False
+-- True
+-- False
+-- False
+-- True
+-- False
+-- False
+
 
 -- Exercise 2
--- Time spent:
+-- Time spent in minutes:
 -- Michael      60
 -- Constantijn  5 - Not completed
 -- Niels        30 - Not completed
@@ -78,6 +109,7 @@ prop_parsingFormShouldGiveOriginal = monadicIO $ do
     assert $ all (\x -> (parse (show x) !! 0) == x) s
 
 exerciseTwo = do
+    print "Exercise two"
     print $ (parse "*(2 3)") == ([Cnj [Prop 2, Prop 3]])
     print $ (parse "-*(2 3)") == ([Neg (Cnj [Prop 2, Prop 3])])
     print $ (parse "+(2 *(3 -4))") == ([Dsj [Prop 2, Cnj [Prop 3, Neg (Prop 4)]]])
@@ -95,6 +127,7 @@ exerciseTwo = do
 -- To workaround this, We simply altered the generator to only generate propositions with positive 'names'.
 
 -- output:
+-- "Exercise two"
 -- True
 -- True
 -- True
@@ -106,66 +139,71 @@ exerciseTwo = do
 -- or change the type for the names of propositions.
 
 -- Exercise 3
--- Time spent:
--- Michael      120 - Not completed
+-- Time spent in minutes:
+-- Michael      480
 -- Constantijn  130
 -- Niels        100
 -- Arjan        300
 
--- We used the Exercise of Constantijn because he had the most compact ToCNF method
--- We used the test of Arjan who used the generator of Michael because this was the best
+-- We found out our implementation of toCNF wasn't complete, so Arjan and Michael made two separate implementations.
+-- Michael's implementation is presented here, since it is the most complete. If we had more time, we would have chosen Arjan's implementation since his is made to work on conjunctions
+-- and disjunctions with arbitrary length, rather than Michael's implementation which assumes that it is exactly two.
 -- automated test
 
-toCNF :: Form -> Form
-toCNF = nnf . arrowfree
+-- Mathematically multiply x with y in various cases. 
+-- e.g. 1 v (2 ^3) becomes (1 v 2) ^ (1 v 3)
+combineF :: Form -> Form -> Form
+combineF (Prop x) (Cnj fs) = Cnj (map (\f -> Dsj [Prop x, f]) fs)
+combineF (Cnj fs) (Prop x) = Cnj (map (\f -> Dsj [Prop x, f]) fs)
+combineF (Prop x) (Dsj fs) = Dsj (map (\f -> Dsj [Prop x, f]) fs)
+combineF (Dsj fs) (Prop x) = Dsj (map (\f -> Dsj [Prop x, f]) fs)
+combineF (Cnj fs) (Cnj xs) = Cnj (concat (map (\f -> (map (\x -> Dsj [f, x]) xs)) fs))
+combineF (Cnj fs) (Dsj x) = Cnj (map (\f -> Dsj [Dsj x ,f]) fs)
+combineF (Dsj x) (Cnj fs) = Cnj (map (\f -> Dsj [Dsj x, f]) fs)
+combineF x y = Dsj [x, y]
 
-fFalse, fTrue :: Form -> Form
-fFalse f = Cnj [x, Neg x] where x = Prop (head (propNames f))
-fTrue f = Dsj [x, Neg x] where x = Prop (head (propNames f))
+-- Find cases where a disjunction contains one or two conjunctions.
+distributeORs :: Form -> Form
+distributeORs (Prop x) = Prop x
+distributeORs (Neg x) = Neg (distributeORs x)
+distributeORs (Dsj [(Cnj p), (Cnj q)]) = distributeORs $ combineF (Cnj p) (Cnj q)
+distributeORs (Dsj [p, (Cnj q)]) = distributeORs $ combineF p (Cnj q)
+distributeORs (Dsj [(Cnj p), q]) = distributeORs $ combineF (Cnj p) q
+distributeORs (Cnj xs) = Cnj (map distributeORs xs)
+distributeORs (Dsj xs) = Dsj (map distributeORs xs)
 
-noSingle :: Form -> Form
-noSingle (Cnj fs) | length fs == 1 = head fs
-                  | otherwise = Cnj fs
-noSingle (Dsj fs) | length fs == 1 = head fs
-                  | otherwise = Dsj fs
-
-validCnj :: [Form] -> [Form]
-validCnj fs | contradiction (Cnj fs) = [fFalse (head fs)]
-            | otherwise = fs
-
-parseDsj :: [Form] -> [Form]
-parseDsj fs = concat (map (\x -> pdsj x) fs)
-              where
-               pdsj (Dsj fs) =fs
-               pdsj f = [f]
-
-flatten :: Form -> Form
-flatten (Neg (Prop x)) = Neg (Prop x)
-flatten (Neg f) = flatten(Neg (flatten f))
-flatten (Cnj fs) | fFalse (head fs) == (Cnj fs) = Cnj fs
-               | otherwise = noSingle (Cnj (map (\x -> flatten x) (validCnj fs)))
-flatten (Dsj fs) | fTrue (head fs) == (Dsj fs) = Dsj fs
-               | otherwise = noSingle (Dsj(parseDsj ((map (\x -> flatten x) (parseDsj fs)))))
-flatten f = f
-
-cnfTest :: Form -> Bool
-cnfTest f = and (map (\x -> evl x f == evl x y) (allVals f)) && not (isInfixOf "==>" (Prelude.show (y :: Form))) && not (isInfixOf "<=>" (Prelude.show (y :: Form))) where y = flatten ( toCNF f)
-
--- CREDITS: MICHEAL
--- inspiration http://www.cse.chalmers.se/~rjmh/QuickCheck/manual_body.html#16
+-- This function recurses into itself until the outcome doesn't change anymore.
+-- This is because distributeORs doesn't deal with two-level deep possibilities, that would be an insane
+-- Acceptable input is only valid while the length of elements in a Dsj or Cnj is exactly 2.
+toCNF:: Form -> Form
+toCNF f | outcome /= f = toCNF outcome
+      | otherwise = outcome
+      where outcome = (distributeORs . nnf . arrowfree) f
 
 exerciseThree = do
-                  quickCheck $ forAll (formNGen 1000 10) (\x -> cnfTest x)
+    print "Exercise three"
+    print $ toCNF $ head $ parse "+(1 *(2 +(3 *(4 +(5 (6==>7))))))"
+-- output:
+-- "Exercise three"
+-- *(+(1 2) *(+(1 +(3 4)) +(1 +(3 +(5 +(-6 7))))))
+
 
 -- Exercise 4
--- Time spent:
--- Michael      360
+-- Time spent in minutes:
+-- Michael      480
 -- Constantijn  50
 -- Niels        270
--- Arjan        30 - Combined with exercise 3
+-- Arjan        300
 
--- We used the implementations of exercise 4 of Michael and Niels
+-- We used the implementations of exercise 4 of Michael and Niels because we couldn't decide which is better.
+-- The quickcheck implementation integrates well in quickcheck, but has the tendency to generate very balanced forms (implies and forms with equal length subforms)
+-- The std random version is nice because it doesn't have this overly balanced tree generation, but it isn't easily integrated with quickcheck.
+
 -- Niels had a non-quickCheck implementation and Michael had a quickCheck implementation
+
+-- During exercise 4, it was discovered that the toCNF function in exercise 3 is faulty.
+-- Some constructs generated by the form generator end up creating infinite loops.
+-- Due to time constraints, this issue has not been resolved.
 
 -- QuickCheck implementation
 -- takes nForms from a filtered list of IO forms.
@@ -177,7 +215,7 @@ filterOnNProps nForms nProps forms = do
 -- Generate exactly nForms amount of Forms, all with exactly nProps.
 -- I would've liked to use the repeat function here, but the sequence function in filterOnNProps evaluates the entire list.
 genWithExactlyNProps :: Int -> Int -> IO [Form]
-genWithExactlyNProps nForms nProps = filterOnNProps nForms nProps $ genN (nForms*50) (formNGen nProps 30)
+genWithExactlyNProps nForms nProps = filterOnNProps nForms nProps $ genN (nForms*50) (formNGen nProps (nProps+2))
 
 -- properties to test the generators themselves
 
@@ -189,7 +227,7 @@ prop_generatesMostlySatisfiableForms = monadicIO $ do
 
 prop_neverMoreThanNProps ::  Property
 prop_neverMoreThanNProps = monadicIO $ do
-    s <- run $ genN 5000 (formNGen 5 30)
+    s <- run $ genN 5000 (formNGen 5 5)
     assert $ all (\x -> length (propNames x) <= 5) s
 
 prop_exactlyNProps :: Property
@@ -199,11 +237,28 @@ prop_exactlyNProps = monadicIO $ do
 
 -- properties to test exercise 3
 
+prop_CNFInputUnaltered :: Property
+prop_CNFInputUnaltered = monadicIO $ do
+    s <- run $ generate $ formNCnjGen 5 8
+    assert $ toCNF s == s
+
+-- prop_CNF fails because the CNF function is not good enough. It generates things like "-*((1==>2) (1<=>4)))" which end up causing infinite recursion.
+prop_CNF :: Property
+prop_CNF = monadicIO $ do
+    s <- run $ genN 50 (formNGen 4 5)
+    assert $ length (filter (\x -> toCNF x /= x) s) > 48
+
+
 exerciseFourQuickCheck = do
-    print "QuickCheck running, this may take a while - three tests"
+    print "exerciseFourQuickCheck running, this may take a while - four tests"
     quickCheck prop_generatesMostlySatisfiableForms
     quickCheck prop_neverMoreThanNProps
     quickCheck prop_exactlyNProps
+    quickCheck prop_CNFInputUnaltered
+    -- quickCheck $ within 5000000 prop_CNF -- this times out in ghci but doesn't when compiling.
+
+-- output: see below
+
 
 
 -- Non-quickcheck implementation
@@ -264,4 +319,23 @@ exerciseThreeTest = do let n = 4
                        coins <- randomSequenceN n 0 1
                        let form = formulaGenerator (toTuples opp vars coins) "0"
                        print form
-                       print "4"
+
+-- output:
+-- "exerciseFourQuickCheck running, this may take a while - four tests"
+-- +++ OK, passed 100 tests.
+-- +++ OK, passed 100 tests.
+-- +++ OK, passed 100 tests.
+-- +++ OK, passed 100 tests.
+-- "*(0 +(1 *(3 *(0 +(1 +(3 +(3 *(1 *(1 +(*(3 +(+(2 *(0 +(1 *(1 +(2 +(*(*(+(3 +(2 +(3 +(2 +(*(*(+(+(1 *(+(0 *(1 *(+(+(+(1 *(+(3 *(2 +(2 +(+(+(1 *(2 *(0 +(+(*(3 +(*(2 *(0 +(2 +(+(3 *(*(3 *(2 *(1 +(*(+(+(+(0 +(+(+(0 +(0 *(0 +(1 +(*(*(1 +(1 *(1 *(+(3 +(1 *(+(+(0 +(2 +(+(3 *(*(0 *(0 +(+(3 *(2 *(+(+(2 +(*(0 +(*(+(0 +(+(0 *(3 0)) 0)) 1) 3)) 2)) 0) 2))) 2))) 0)) 0))) 0) 2))) 1)))) 3) 1))))) 0) 3)) 1) 3) 1) 3)))) 0)) 2)))) 0)) 2) 2)))) 3) 1)))) 0)) 1) 2) 2))) 1)) 0) 0) 0) 0))))) 1) 3) 2)))))) 1)) 1))))))))))"
+-- "PARSED  [*(0 +(1 *(3 *(0 +(1 +(3 +(3 *(1 *(1 +(*(3 +(+(2 *(0 +(1 *(1 +(2 +(*(*(+(3 +(2 +(3 +(2 +(*(*(+(+(1 *(+(0 *(1 *(+(+(+(1 *(+(3 *(2 +(2 +(+(+(1 *(2 *(0 +(+(*(3 +(*(2 *(0 +(2 +(+(3 *(*(3 *(2 *(1 +(*(+(+(+(0 +(+(+(0 +(0 *(0 +(1 +(*(*(1 +(1 *(1 *(+(3 +(1 *(+(+(0 +(2 +(+(3 *(*(0 *(0 +(+(3 *(2 *(+(+(2 +(*(0 +(*(+(0 +(+(0 *(3 0)) 0)) 1) 3)) 2)) 0) 2))) 2))) 0)) 0))) 0) 2))) 1)))) 3) 1))))) 0) 3)) 1) 3) 1) 3)))) 0)) 2)))) 0)) 2) 2)))) 3) 1)))) 0)) 1) 2) 2))) 1)) 0) 0) 0) 0))))) 1) 3) 2)))))) 1)) 1))))))))))]"
+-- "*(2 *(3 +(2 *(1 0))))"
+
+
+-- because doing these in ghci is too slow, we added a main which can be compiled with optimizations.
+main = do
+    exerciseOne
+    exerciseTwo
+    exerciseThree
+    exerciseFourQuickCheck
+    exerciseFour
+    exerciseThreeTest
