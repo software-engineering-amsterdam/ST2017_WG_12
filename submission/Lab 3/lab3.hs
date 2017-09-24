@@ -31,7 +31,7 @@ genN n gen = sequence $ take n $ repeat $ generate gen
 -- } End of generators
 
 -- Exercise 1
--- Time spent: 
+-- Time spent:
 -- Michael      45
 -- Constantijn  60
 -- Niels        60
@@ -58,7 +58,7 @@ exerciseOne = do
     print $ equiv (Impl p q) (Dsj [Neg p, q])
 
 -- Exercise 2
--- Time spent: 
+-- Time spent:
 -- Michael      60
 -- Constantijn  5 - Not completed
 -- Niels        30 - Not completed
@@ -94,7 +94,7 @@ exerciseTwo = do
 -- During our testing, We found that the parser doesn't handle negative ints well, parsing them instead as negations. A suggested fix would be to represent negations as a different character than the minus sign.
 -- To workaround this, We simply altered the generator to only generate propositions with positive 'names'.
 
--- output: 
+-- output:
 -- True
 -- True
 -- True
@@ -106,7 +106,7 @@ exerciseTwo = do
 -- or change the type for the names of propositions.
 
 -- Exercise 3
--- Time spent: 
+-- Time spent:
 -- Michael      120 - Not completed
 -- Constantijn  130
 -- Niels        100
@@ -135,7 +135,7 @@ validCnj fs | contradiction (Cnj fs) = [fFalse (head fs)]
 
 parseDsj :: [Form] -> [Form]
 parseDsj fs = concat (map (\x -> pdsj x) fs)
-              where 
+              where
                pdsj (Dsj fs) =fs
                pdsj f = [f]
 
@@ -158,7 +158,7 @@ exerciseThree = do
                   quickCheck $ forAll (formNGen 1000 10) (\x -> cnfTest x)
 
 -- Exercise 4
--- Time spent: 
+-- Time spent:
 -- Michael      360
 -- Constantijn  50
 -- Niels        270
@@ -209,7 +209,7 @@ exerciseFourQuickCheck = do
 -- Non-quickcheck implementation
 -- Inspiration for random function: https://www.vex.net/~trebla/haskell/random.xhtml
 -- This function generates a formula based on a list of lists of Integers. Every element of this
--- list of intgers should always contain three elements. 
+-- list of intgers should always contain three elements.
 -- 0: Integer which determines which opperator will be used.         (1-5)
 -- 1: Integer which represents a variable							 (0-n)
 -- 2: This Integer determines if the 'tree' should go left or right. (0-1)
@@ -228,7 +228,7 @@ formulaGenerator (y:ys) x | y !! 0 == 1 && y !! 2 == 0 = formulaGenerator ys ("*
 
                           | y !! 0 == 5 && y !! 2 == 0 = formulaGenerator ys ("(" ++ x ++ " <=> " ++ show (y !! 1) ++")")
                           | y !! 0 == 5 && y !! 1 == 0 = formulaGenerator ys ("(" ++ show (y !! 1) ++" <=> " ++ x ++ ")")
- 
+
                           | otherwise = formulaGenerator ys x
 formulaGenerator [] x = x
 
@@ -239,11 +239,16 @@ randomSequenceN n lower upper = sequence (replicate n (randomRIO (lower,upper)))
 toTuples :: [Int] -> [Int] -> [Int] -> [[Int]]
 toTuples xs ys zs = zipWith3 (\ x y z -> [x, y, z]) xs ys zs
 
--- A cnf form should not change
-prop_unAffected f = toCNF f == f
+prop_affected, prop_unaffected, prop_equivalance :: Form -> Bool
 
--- A non cnf from should not change
-prop_Affected f = toCNF f /= f
+-- A non cnf should not change
+prop_affected f = toCNF f /= f
+
+-- A cnf should not change
+prop_unaffected f = toCNF f == f
+
+-- The cnf should yield the same truth table
+prop_equivalance f = equiv (toCNF f) (f)
 
 exerciseFour = do let n = 100
                   opp <- randomSequenceN n 1 2
