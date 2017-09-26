@@ -56,7 +56,7 @@ trClos :: Ord a => Rel a -> Rel a
 --     | otherwise = trClos s
 --     where s = nub $ r ++ (r @@ r)
 
-trClos r = until (\ x -> x == s) (\ x -> s) r
+trClos r = sort (until (\ x -> x == s) (\ x -> s) r)
     where s = nub $ r ++ (r @@ r)
 
 -- Exerercise 7 (65 minutes)
