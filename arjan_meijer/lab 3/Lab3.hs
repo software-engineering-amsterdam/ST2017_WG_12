@@ -181,17 +181,17 @@ hasCnj [] = False
 
 -- RETRY ON CNF!!
 noDoubleInF :: Form -> Form
-noDoubleInF (Cnj fs) = Cnj (noDoubleCnj fs)
-noDoubleInF (Dsj fs) = Dsj (noDoubleDsj fs)
+noDoubleInF (Cnj fs) = Cnj fs --Cnj (noDoubleCnj fs)
+noDoubleInF (Dsj fs) = Dsj fs --Dsj (noDoubleDsj fs)
 noDoubleInF f = f
 
 noDoubleCnj :: [Form] -> [Form]
-noDoubleCnj (x:xs) | entails (Cnj xs) x = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
+noDoubleCnj (x:xs) | and (map (\v -> evl v x == evl v (Cnj xs)) (allVals (Cnj(x:xs)))) = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
                 | otherwise = x:(noDoubleCnj xs)
 noDoubleCnj [] = []
 
 noDoubleDsj :: [Form] -> [Form]
-noDoubleDsj (x:xs) | entails (Dsj xs) x = noDoubleDsj xs
+noDoubleDsj (x:xs) | and (map (\v -> evl v x == False) (filter (\v -> evl v (Dsj(xs)) == False) (allVals(Dsj(x:xs))))) = noDoubleDsj xs
                    | otherwise = x:(noDoubleDsj xs)
 noDoubleDsj [] = []
 
