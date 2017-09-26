@@ -37,6 +37,8 @@ setDifference' (Set (h : t)) xs ys
     | inSet h xs = setDifference' (list2set t) xs ys
     | otherwise = setDifference' (list2set t) xs (insertSet h ys)
 
+-- Exercise 4 (0 minutes)
+
 -- Exercise 5 (20 minutes)
 type Rel a = [(a,a)]
 
@@ -56,8 +58,14 @@ trClos :: Ord a => Rel a -> Rel a
 --     | otherwise = trClos s
 --     where s = nub $ r ++ (r @@ r)
 
-trClos r = sort (until (\ x -> x == s) (\ x -> s) r)
-    where s = nub $ r ++ (r @@ r)
+trClos r = until (\ x -> x == f x) f r
+    where f = (\ x -> sort (nub (x ++ (x @@ x))))
+
+-- fp :: Eq a => (a -> a) -> a -> a
+-- fp f = until (\ x -> x == f x) f
+
+-- With fp
+-- trClos r = fp (\ x -> sort (nub (x ++ (x @@ x)))) r
 
 -- Exerercise 7 (65 minutes)
 -- prop_sym :: Rel a -> Bool

@@ -13,7 +13,7 @@ import Debug.Trace
 -- No questions
 
 -- Exercise 2
--- Time spent: xx Minutes
+-- Time spent: 30 Minutes
 
 -- source: https://hackage.haskell.org/package/checkers-0.4.7/docs/src/Test-QuickCheck-Instances-Tuple.html
 {- | Generates a 2-tuple using its arguments to generate the parts. -}
@@ -76,14 +76,14 @@ tr' a b c | x == [] || and (map (\z -> elem z c) x) = c
 prop_sym :: Ord a => Rel a -> Bool
 prop_sym r = [(x,y)|(x,y) <- r, elem (y,x) r] == r
 
-exerciseSevenA = do
+--exerciseSevenA = do
 
 -- prop_sym (symClos [(1,2),(4,2)])
 prop_tr :: Ord a => Rel a -> Bool
-prop_tr r = and ( map (\(x,y) -> and ( map (\(a,b) -> elem (x,b) r) ([(w,z)|(w,z) <- r, w == y]) )) r)
+prop_tr r = all (\(x,y) -> all (\(a,b) -> elem (x,b) r) [(w,z)|(w,z) <- r, w == y]) r
 
 -- Exercise 8
--- Time spent: Minutes
+-- Time spent: 15 Minutes
 
 -- Yes, if you flip the order of the closure execution the results will
 -- be different. In some cases, both closures will add relations
