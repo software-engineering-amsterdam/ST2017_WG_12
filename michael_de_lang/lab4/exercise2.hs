@@ -11,7 +11,7 @@ allUnique (x:xs) = notElem x xs && allUnique xs
 isSorted :: Ord a => [a] -> Bool
 isSorted [] = True
 isSorted (x:[]) = True
-isSorted (x:y:xs) = x < y && isSorted xs
+isSorted (x:y:xs) = x < y && isSorted (y:xs)
 
 getValuesFromSet :: Set Int -> [Int]
 getValuesFromSet (Set a) = a
