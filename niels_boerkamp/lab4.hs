@@ -10,8 +10,6 @@ import Data.List
 
 -- Exercise 2
 -- Time spent:
-GenerateSet2 :: Set Int
-GenerateSet2 = (Set (randomSequenceN 10 1 10))
 
 
 -- Exercise 3
