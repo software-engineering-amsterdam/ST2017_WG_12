@@ -43,7 +43,7 @@ type Rel a = [(a,a)]
 symClos :: Ord a => Rel a -> Rel a
 symClos r = sort (nub (r ++ (map (\ (a,b) -> (b,a)) r)))
 
--- Exercise 6 (50 minutes)
+-- Exercise 6 (60 minutes)
 infixr 5 @@
 
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
