@@ -157,14 +157,31 @@ trClos xs | applyTr == xs = xs
 -- Michael 		120 minutes
 -- Niels		15 minutes
 
-prop_tr :: Ord a => Rel a -> Bool
-prop_tr r = all (\(x,y) -> all (\(a,b) -> elem (x,b) r) [(w,z)|(w,z) <- r, w == y]) r
+-- source: https://hackage.haskell.org/package/checkers-0.4.7/docs/src/Test-QuickCheck-Instances-Tuple.html
+{- | Generates a 2-tuple using its arguments to generate the parts. -}
+(>*<) :: Gen a -> Gen b -> Gen (a,b)
+x >*< y = liftM2 (,) x y
+
+generateRelQuickCheck :: Int -> Int -> Int -> Gen (Rel Int)
+generateRelQuickCheck n lower upper = do
+    xs <- vectorOf n $ (choose (lower, upper)) >*< (choose (lower, upper))
+    return $ sort $ nub $ xs
+
+prop_transitive :: Property
+prop_transitive = monadicIO $ do
+    rel <- run $ generate $ generateRelQuickCheck 10 1 5
+    let trRel = trClos rel
+    assert $ all (\(x,y) -> all (\(a,b) -> elem (x,b) trRel) [(w,z)|(w,z) <- trRel, w == y]) trRel
 
 -- Property to test whether for all (x,y) in a relation, (y,x) exists after applying symClos         
 prop_symmetric :: Property
 prop_symmetric = monadicIO $ do
     rel <- run $ generate $ generateRelQuickCheck 10 1 5
     assert $ all (\(x,y) -> elem (y,x) (symClos rel)) rel
+    
+exerciseSeven = do
+    quickCheck prop_symmetric
+    quickCheck prop_transitive
     
 -- Exercise 8
 -- Time spent: 5 minutes
