@@ -15,22 +15,13 @@ generateSetQuickCheck n lower upper = do
     return $ list2set xs
 
 setIntersection :: Set Int -> Set Int -> Set Int
-setIntersection a b = do
-    let as = getValuesFromSet a
-    let bs = getValuesFromSet b
-    list2set $ filter (\x -> elem x bs) as
+setIntersection (Set as) (Set bs) = list2set $ filter (\x -> elem x bs) as
 
 setUnion :: Set Int -> Set Int -> Set Int
-setUnion a b = do
-    let as = getValuesFromSet a
-    let bs = getValuesFromSet b
-    list2set $ (as ++ bs)
+setUnion (Set as) (Set bs) = list2set $ (as ++ bs)
 
 setDifference :: Set Int -> Set Int -> Set Int
-setDifference a b = do
-    let as = getValuesFromSet a
-    let bs = getValuesFromSet b
-    list2set $ filter (\x -> notElem x as || notElem x bs) (as ++ bs)
+setDifference (Set as) (Set bs) = list2set $ filter (\x -> notElem x as) (as ++ bs)
 
 prop_sameInput :: Property
 prop_sameInput = monadicIO $ do

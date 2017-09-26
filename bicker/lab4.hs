@@ -5,6 +5,8 @@ import System.Random
 import Test.QuickCheck
 import SetOrd
 
+-- Exercise 1 (45 minutes)
+
 -- Exercise 2 (10 minutes)
 -- randomSet :: Int -> Int -> Set Int
 -- randomSet n m = take (randomRIO (n, m)) (generate $ shuffle [n..m])
@@ -41,7 +43,7 @@ type Rel a = [(a,a)]
 symClos :: Ord a => Rel a -> Rel a
 symClos r = sort (nub (r ++ (map (\ (a,b) -> (b,a)) r)))
 
--- Exercise 6 (50 minutes)
+-- Exercise 6 (60 minutes)
 infixr 5 @@
 
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
@@ -49,13 +51,13 @@ r @@ s = nub [ (x,z) | (x,y) <- r, (w,z) <- s, y == w ]
 
 -- Based on: https://stackoverflow.com/questions/19212558/transitive-closure-from-a-list-using-haskell/19214140#19214140
 trClos :: Ord a => Rel a -> Rel a
-trClos r
-    | r == s = sort r
-    | otherwise = trClos s
-    where s = nub $ r ++ (r @@ r)
-
--- trClos r = until (\ x -> x == s) s
+-- trClos r
+--     | r == s = sort r
+--     | otherwise = trClos s
 --     where s = nub $ r ++ (r @@ r)
+
+trClos r = until (\ x -> x == s) (\ x -> s) r
+    where s = nub $ r ++ (r @@ r)
 
 -- Exerercise 7 (65 minutes)
 -- prop_sym :: Rel a -> Bool
