@@ -17,6 +17,7 @@ tautology f = and (map (\v -> evl v f) (allVals f))
 
 entails, equiv :: Form -> Form -> Bool
 entails a b = and ( map (\v -> evl (v ++ (fillVals b a)) b) (filter (\v -> evl v a) (allVals a)))
+              where fillVals a b = map (\x -> (x,False)) (filter (\x -> not (elem x (propNames b))) (propNames a))
 equiv p q = tautology (Equiv p q)
 -- Source: http://people.math.gatech.edu/~ecroot/2406_2012/basic_logic.pdf
 -- equiv is a tautology of an equivalance
@@ -144,7 +145,7 @@ validCnj fs | contradiction (Cnj fs) = [fFalse (head fs)]
             | otherwise = fs
 
 cnfTest :: Form -> Bool
-cnfTest f = (and (map (\x -> evl x f == evl x y) (allVals f))) && not (isInfixOf "==>" (show y)) && not (isInfixOf "<=>" (show y)) where y = tCNF f
+cnfTest f = (and (map (\x -> evl x f == evl x y) (allVals f))) && not (isInfixOf "==>" (show y)) && not (isInfixOf "<=>" (show y)) where y = toCnf f
 
 -- CREDITS: MICHEAL
 -- inspiration http://www.cse.chalmers.se/~rjmh/QuickCheck/manual_body.html#16
@@ -159,6 +160,104 @@ form' n | n > 0 = oneof [liftM Prop arbitrary, liftM Neg subform,
 testGen = resize 10 $ sized form'
 
 
---main = quickCheck $ forAll testGen (\x -> satisfiable x)
 exerciseThree = do
                   quickCheck $ forAll testGen (\x -> cnfTest x)
+
+hasDsj, hasCnj :: [Form] -> Bool
+hasDsj ((Dsj fs):xs) = True
+hasDsj (x:xs) = hasDsj xs
+hasDsj [] = False
+
+hasCnj ((Cnj fs):xs) = True
+hasCnj (x:xs) = hasCnj xs
+hasCnj [] = False
+
+
+
+
+
+
+-- 600 minuten :(
+
+-- RETRY ON CNF!!
+noDoubleInF :: Form -> Form
+noDoubleInF (Cnj fs) = Cnj (noDoubleCnj fs)
+noDoubleInF (Dsj fs) = Dsj (noDoubleDsj fs)
+noDoubleInF f = f
+
+noDoubleCnj :: [Form] -> [Form]
+noDoubleCnj (x:xs) | entails (Cnj xs) x = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
+                | otherwise = x:(noDoubleCnj xs)
+noDoubleCnj [] = []
+
+noDoubleDsj :: [Form] -> [Form]
+noDoubleDsj (x:xs) | entails (Dsj xs) x = noDoubleDsj xs
+                   | otherwise = x:(noDoubleDsj xs)
+noDoubleDsj [] = []
+
+-- Removes all instances of Dsj in the content of a DSJ
+concatDsj :: [Form] -> [Form]
+concatDsj ((Dsj fs):xs) = concatDsj(xs) ++ fs
+concatDsj (x:xs) = x:(concatDsj xs)
+concatDsj [] = []
+
+-- Removes all instances of CNJ in the content of a Cnj
+concatCnj :: [Form] -> [Form]
+concatCnj ((Cnj fs):xs) = concatCnj(xs) ++ fs
+concatCnj (x:xs) = x:(concatCnj xs)
+concatCnj [] = []
+
+refactorDsj :: [Form] -> Form
+refactorDsj xs | hasCnj xs = dsjRef xs
+               | otherwise = (Dsj xs)
+
+dsjRef :: [Form] -> Form
+dsjRef (x:y:xs) = dsjRef ((combineDsj x y):xs)
+dsjRef (x:[]) = x
+dsjRef [] = error "Invalid"
+
+combineDsj :: Form -> Form -> Form
+combineDsj (Prop x) (Prop y) = Cnj [Dsj[Prop x, Prop y]]
+combineDsj (Prop x) (Cnj fs) = Cnj (map (\f -> Dsj [Prop x, f]) fs)
+combineDsj (Cnj fs) (Prop x) = Cnj (map (\f -> Dsj [Prop x, f]) fs)
+combineDsj (Cnj fs) (Cnj xs) = Cnj (concat (map (\f -> (map (\x -> Dsj [f, x]) xs)) fs))
+combineDsj f x = error ("No pattern matched " ++ show f ++ "  -  " ++ show x)
+
+refactorCnj :: [Form] -> Form
+refactorCnj xs | hasDsj xs = cnjRef xs
+               | otherwise = (Cnj xs)
+
+cnjRef :: [Form] -> Form
+cnjRef (x:y:xs) = cnjRef ((combineCnj x y):xs)
+cnjRef (x:[]) = x
+cnjRef [] = error "Invalid"
+
+combineCnj :: Form -> Form -> Form
+combineCnj (Prop x) (Prop y) = Dsj [Cnj[Prop x, Prop y]]
+combineCnj (Prop x) (Dsj fs) = Dsj (map (\f -> Cnj [Prop x, f]) fs)
+combineCnj (Dsj fs) (Prop x) = Dsj (map (\f -> Cnj [Prop x, f]) fs)
+combineCnj (Dsj fs) (Dsj xs) = Dsj (concat (map (\f -> (map (\x -> Cnj[f,x]) xs)) fs))
+
+toCnf :: Form -> Form
+toCnf f = (cnf ( nnf ( arrowfree f)))
+
+cnf :: Form -> Form
+cnf f | f == x = x
+        | otherwise = cnf x
+        where x = getCnf f
+
+getCnf :: Form -> Form
+getCnf (Dsj fs) = cnfDsj (gCnf fs)
+getCnf (Cnj fs) = Cnj(noDoubleCnj $ concatCnj (gCnf fs))
+getCnf f = f
+
+gCnf :: [Form] -> [Form]
+gCnf ((Dsj fs):xs) = (cnfDsj(concat(map (\x -> gCnf [x]) fs))):gCnf(xs)
+gCnf ((Cnj fs):xs) = (cnfCnj(concat(map (\x -> gCnf [x]) fs))):gCnf(xs)
+gCnf f = f
+
+cnfDsj :: [Form] -> Form
+cnfDsj xs = noDoubleInF $ refactorDsj $ concatDsj xs
+
+cnfCnj :: [Form] -> Form
+cnfCnj xs = noDoubleInF $ refactorCnj $ concatCnj xs
