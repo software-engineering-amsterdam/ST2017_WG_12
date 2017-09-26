@@ -5,6 +5,8 @@ import System.Random
 import Test.QuickCheck
 import SetOrd
 
+-- Exercise 1 (45 minutes)
+
 -- Exercise 2 (10 minutes)
 -- randomSet :: Int -> Int -> Set Int
 -- randomSet n m = take (randomRIO (n, m)) (generate $ shuffle [n..m])
@@ -54,7 +56,7 @@ trClos r
     | otherwise = trClos s
     where s = nub $ r ++ (r @@ r)
 
--- trClos r = until (\ x -> x == s) s
+-- trClos r = until (\ x -> x == s) s r
 --     where s = nub $ r ++ (r @@ r)
 
 -- Exerercise 7 (65 minutes)
