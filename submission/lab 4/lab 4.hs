@@ -184,7 +184,11 @@ exerciseSeven = do
     quickCheck prop_transitive
 
 -- Exercise 8
--- Time spent: 5 minutes
+-- Arjan 		15 minutes
+-- Constantijn 	15 minutes
+-- Michael 		? minutes
+-- Niels		5 minutes
+
 -- Proof by contradiction. The order in which these functions
 -- are executed matters.
 
