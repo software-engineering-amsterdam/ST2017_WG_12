@@ -5,7 +5,7 @@ import System.Random
 import Test.QuickCheck
 import SetOrd
 
--- Exercise 1 (45 minutes)
+-- Exercise 1 (65 minutes)
 
 -- Exercise 2 (10 minutes)
 -- randomSet :: Int -> Int -> Set Int
@@ -37,7 +37,7 @@ setDifference' (Set (h : t)) xs ys
     | inSet h xs = setDifference' (list2set t) xs ys
     | otherwise = setDifference' (list2set t) xs (insertSet h ys)
 
--- Exercise 4 (0 minutes)
+-- Exercise 4 (90 minutes)
 
 -- Exercise 5 (20 minutes)
 type Rel a = [(a,a)]
@@ -71,7 +71,7 @@ trClos r = until (\ x -> x == f x) f r
 -- prop_sym :: Rel a -> Bool
 prop_sym r = and (map (\ (a,b) -> elem (b,a) r) r)
 
--- prop_tr r = r == nub [(a,b) | (a,b) <- r, (b',c) <- r, b==b']
+prop_tr r = r == nub [(a,c) | (a,b) <- r, (b',c) <- r, b==b']
 
 -- randomRel :: Int -> Rel a
 -- randomRel 0 = []
@@ -84,3 +84,14 @@ prop_sym r = and (map (\ (a,b) -> elem (b,a) r) r)
 -- data RandomTuple = RandomTupleInt (Gen Int, Gen Int) deriving Show
 -- instance Arbitrary RandomTuple where
 --     arbitrary = (choose (0,128), choose (0,128))
+
+-- Exercise 8 (15 minutes)
+-- A contradiction shows that there is a difference between the symmetric
+-- closure of the transitive closure of a relation R and the transitive
+-- closure of the symmetric closure of R
+exercise8 :: Bool
+exercise8 = do
+    let example = [(1,2),(2,3),(3,4)]
+    let x = symClos (trClos example)
+    let y = trClos (symClos example)
+    x == y
