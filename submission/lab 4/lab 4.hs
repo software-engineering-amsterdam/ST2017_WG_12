@@ -109,7 +109,7 @@ exerciseThree = do
 -- Exercise 4
 -- Arjan 		30 minutes
 -- Constantijn 	90 minutes
--- Michael 		0 minutes
+-- Michael 		75 minutes
 -- Niels		60 minutes
 
 -- No questions yet
@@ -186,7 +186,7 @@ exerciseSeven = do
 -- Exercise 8
 -- Arjan 		15 minutes
 -- Constantijn 	15 minutes
--- Michael 		? minutes
+-- Michael 		5 minutes
 -- Niels		5 minutes
 
 -- Proof by contradiction. The order in which these functions
