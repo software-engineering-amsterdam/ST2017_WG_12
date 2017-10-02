@@ -10,7 +10,7 @@ import Data.List
 -- Exercise 1
 -- Time spent:
 -- Arjan 		55 minutes
--- Constantijn 	45 minutes
+-- Constantijn 	65 minutes
 -- Michael 		45 minutes
 -- Niels		50 minutes
 
@@ -82,15 +82,15 @@ set1 = list2set [1,2,3,4,5,6]
 set2 = list2set [4,5,6,7,8,9]
 
 setLength :: Set Int -> Int
-setLength (Set xs) = length xs          
-          
+setLength (Set xs) = length xs
+
 prop_sameInput :: Property
 prop_sameInput = monadicIO $ do
     set <- run $ generate $ generateSetQuickCheck 10 1 100
-    assert $ (myIntersect set set) == set 
+    assert $ (myIntersect set set) == set
     assert $ (myUnion set set) == set
     assert $ (myDifference set set) == Set []
-    
+
 prop_length :: Property
 prop_length = monadicIO $ do
     set1 <- run $ generate $ generateSetQuickCheck 10 1 100
@@ -105,11 +105,11 @@ exerciseThree = do
           print $ show $ myDifference set1 set2
           quickCheck $ prop_sameInput
           quickCheck $ prop_length
-          
+
 -- Exercise 4
 -- Arjan 		30 minutes
--- Constantijn 	0 minutes
--- Michael 		0 minutes
+-- Constantijn 	90 minutes
+-- Michael 		75 minutes
 -- Niels		60 minutes
 
 -- No questions yet
@@ -138,7 +138,7 @@ exerciseFive = do
 -- Michael 		30 minutes
 -- Niels		60 minutes
 
--- The input specification is an orderd list and the same goes for the output. Therefore, the where clause 
+-- The input specification is an orderd list and the same goes for the output. Therefore, the where clause
 -- needs to produce sorted output.
 
 infixr 5 @@
@@ -150,24 +150,45 @@ trClos :: (Ord a, Show a) => Rel a -> Rel a
 trClos xs | applyTr == xs = xs
           | otherwise = trClos applyTr
           where applyTr = sort $ nub $ (xs ++ (xs @@ xs))
-          
+
 -- Exercise 7
 -- Arjan 		15 minutes
 -- Constantijn 	65 minutes
 -- Michael 		120 minutes
 -- Niels		15 minutes
 
-prop_tr :: Ord a => Rel a -> Bool
-prop_tr r = all (\(x,y) -> all (\(a,b) -> elem (x,b) r) [(w,z)|(w,z) <- r, w == y]) r
+-- source: https://hackage.haskell.org/package/checkers-0.4.7/docs/src/Test-QuickCheck-Instances-Tuple.html
+{- | Generates a 2-tuple using its arguments to generate the parts. -}
+(>*<) :: Gen a -> Gen b -> Gen (a,b)
+x >*< y = liftM2 (,) x y
 
--- Property to test whether for all (x,y) in a relation, (y,x) exists after applying symClos         
+generateRelQuickCheck :: Int -> Int -> Int -> Gen (Rel Int)
+generateRelQuickCheck n lower upper = do
+    xs <- vectorOf n $ (choose (lower, upper)) >*< (choose (lower, upper))
+    return $ sort $ nub $ xs
+
+prop_transitive :: Property
+prop_transitive = monadicIO $ do
+    rel <- run $ generate $ generateRelQuickCheck 10 1 5
+    let trRel = trClos rel
+    assert $ all (\(x,y) -> all (\(a,b) -> elem (x,b) trRel) [(w,z)|(w,z) <- trRel, w == y]) trRel
+
+-- Property to test whether for all (x,y) in a relation, (y,x) exists after applying symClos
 prop_symmetric :: Property
 prop_symmetric = monadicIO $ do
     rel <- run $ generate $ generateRelQuickCheck 10 1 5
     assert $ all (\(x,y) -> elem (y,x) (symClos rel)) rel
-    
+
+exerciseSeven = do
+    quickCheck prop_symmetric
+    quickCheck prop_transitive
+
 -- Exercise 8
--- Time spent: 5 minutes
+-- Arjan 		15 minutes
+-- Constantijn 	15 minutes
+-- Michael 		5 minutes
+-- Niels		5 minutes
+
 -- Proof by contradiction. The order in which these functions
 -- are executed matters.
 
@@ -177,5 +198,3 @@ symClosAndTrClos = symClos (trClos [(1,2),(2,3),(3,4)])
 -- This results in not only a symmetic and transative closure, but also reflexive
 trClosAndSymClos = trClos (symClos [(1,2),(2,3),(3,4)])
 -- Result: [(1,1),(1,2),(1,3),(1,4),(2,1),(2,2),(2,3),(2,4),(3,1),(3,2),(3,3),(3,4),(4,1),(4,2),(4,3),(4,4)]
-    
-
