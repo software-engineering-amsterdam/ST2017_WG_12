@@ -35,7 +35,8 @@ testMinimal g = if not (fst res)
                             else do
                                 print "Non-solvable sudoku"
                                 return False
-                else
+                else do
+                    print "Minimal sudoku"
                     return True
                 where res = isMinimal g
     
@@ -50,7 +51,7 @@ minimalSudoku = [[0,0,0,0,0,0,0,1,0],
               [0,3,0,9,1,0,0,0,0]]
     
 main = do
-    {-print "example 1"
+    print "example 1"
     testMinimal example1
     print "example 2"
     testMinimal example2
@@ -59,6 +60,6 @@ main = do
     print "example 4"
     testMinimal example4
     print "example 5"
-    testMinimal example5-}
+    testMinimal example5
     print "minimalSudoku"
     testMinimal minimalSudoku
