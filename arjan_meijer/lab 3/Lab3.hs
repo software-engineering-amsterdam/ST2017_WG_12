@@ -185,17 +185,25 @@ dominates a b v = and (map (\x -> trace(show (x ++ fillVals b a) ++ "--" ++ show
 
 -- RETRY ON CNF!!
 noDoubleInF :: Form -> Form
-noDoubleInF (Cnj fs) = Cnj (noDoubleCnj fs)
-noDoubleInF (Dsj fs) = Dsj (noDoubleDsj fs)
+noDoubleInF (Cnj fs) = Cnj fs --Cnj (noDoubleCnj fs)
+noDoubleInF (Dsj fs) = Dsj fs --Dsj (noDoubleDsj fs)
 noDoubleInF f = f
 
 noDoubleCnj :: [Form] -> [Form]
+<<<<<<< HEAD
 noDoubleCnj (x:xs) | (dominates (Cnj xs) x True) = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
+=======
+noDoubleCnj (x:xs) | and (map (\v -> evl v x == evl v (Cnj xs)) (allVals (Cnj(x:xs)))) = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
+>>>>>>> 3f45502effff972bd6971fe65b2bf42e13da8205
                 | otherwise = x:(noDoubleCnj xs)
 noDoubleCnj [] = []
 
 noDoubleDsj :: [Form] -> [Form]
+<<<<<<< HEAD
 noDoubleDsj (x:xs) | (dominates (Dsj xs) x False) = trace(show (Dsj xs) ++ ">" ++ show x) noDoubleDsj xs
+=======
+noDoubleDsj (x:xs) | and (map (\v -> evl v x == False) (filter (\v -> evl v (Dsj(xs)) == False) (allVals(Dsj(x:xs))))) = noDoubleDsj xs
+>>>>>>> 3f45502effff972bd6971fe65b2bf42e13da8205
                    | otherwise = x:(noDoubleDsj xs)
 noDoubleDsj [] = []
 
