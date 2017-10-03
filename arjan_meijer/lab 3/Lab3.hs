@@ -177,7 +177,11 @@ hasCnj [] = False
 
 
 
+
 -- 600 minuten :(
+
+dominates :: Form -> Form -> Bool -> Bool
+dominates a b v = and (map (\x -> trace(show (x ++ fillVals b a) ++ "--" ++ show v) (evl (x ++ fillVals b a) b) == v) (filter (\x -> (evl x a) == v) (allVals a)))
 
 -- RETRY ON CNF!!
 noDoubleInF :: Form -> Form
@@ -186,12 +190,12 @@ noDoubleInF (Dsj fs) = Dsj (noDoubleDsj fs)
 noDoubleInF f = f
 
 noDoubleCnj :: [Form] -> [Form]
-noDoubleCnj (x:xs) | entails (Cnj xs) x = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
+noDoubleCnj (x:xs) | (dominates (Cnj xs) x True) = trace(show (Cnj xs) ++ ">" ++ show x) noDoubleCnj xs
                 | otherwise = x:(noDoubleCnj xs)
 noDoubleCnj [] = []
 
 noDoubleDsj :: [Form] -> [Form]
-noDoubleDsj (x:xs) | entails (Dsj xs) x = noDoubleDsj xs
+noDoubleDsj (x:xs) | (dominates (Dsj xs) x False) = trace(show (Dsj xs) ++ ">" ++ show x) noDoubleDsj xs
                    | otherwise = x:(noDoubleDsj xs)
 noDoubleDsj [] = []
 
