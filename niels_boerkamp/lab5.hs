@@ -94,4 +94,40 @@ solveNs' = search succNode' solved
 solveShowNs' :: [Node] -> IO[()]
 solveShowNs' = sequence . fmap showNode . solveNs'  
 
--- Exercise 3
+-- Exercise 4
+-- Time spent:
+
+
+-- Exercise 5
+-- Time spent: 30 minutes
+emptyNrc :: Node
+emptyNrc = (\ _ -> 0,constraints' (\ _ -> 0))
+
+rsolveNs' :: [Node] -> IO [Node]
+rsolveNs' ns = rsearch' rsuccNode' solved (return ns)
+
+rsearch' :: (node -> IO [node]) -> (node -> Bool) -> IO [node] -> IO [node]
+rsearch' succ goal ionodes = 
+  do xs <- ionodes 
+     if null xs 
+       then return []
+       else 
+         if goal (head xs) 
+           then return [head xs]
+           else do ys <- rsearch' succ goal (succ (head xs))
+                   if (not . null) ys 
+                      then return [head ys]
+                      else if null (tail xs) then return []
+                           else 
+                             rsearch' succ goal (return $ tail xs)
+
+rsuccNode' :: Node -> IO [Node]
+rsuccNode' (s,cs) = do xs <- getRandomCnstr cs
+                       if null xs 
+                         then return []
+                         else return (extendNode' (s,cs\\xs) (head xs))
+                             
+exerciseFive = do [r] <- rsolveNs' [emptyNrc]
+                  showNode r
+                  s  <- genProblem r
+                  showNode s
