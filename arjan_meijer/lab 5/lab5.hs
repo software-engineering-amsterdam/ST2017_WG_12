@@ -58,7 +58,7 @@ exerciseThree = do [r] <- rsolveNs [emptyN]
                    print y
 
 -- Exercise 4
--- Time spend:
+-- Time spend: 600 minutes
 -- 1 2 3
 -- 4 5 6
 -- 7 8 9
