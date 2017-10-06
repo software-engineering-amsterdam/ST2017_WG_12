@@ -1,0 +1,157 @@
+	Fri Oct 06 22:11 2017 Time and Allocation Profiling Report  (Final)
+
+	   lab 5.1.exe +RTS -p -RTS
+
+	total time  =        0.01 secs   (14 ticks @ 1000 us, 1 processor)
+	total alloc =   4,433,880 bytes  (excludes profiling overheads)
+
+COST CENTRE  MODULE                   SRC                         %time %alloc
+
+freeInSeq    Lecture5                 Lecture5.hs:74:1-29          28.6   19.2
+sameblock'   Main                     lab 5.1.hs:78:1-93           21.4    2.5
+bl'          Main                     lab 5.1.hs:20:1-40           14.3   15.4
+MAIN         MAIN                     <built-in>                    7.1    0.0
+bl           Lecture5                 Lecture5.hs:67:1-38           7.1   22.7
+length3rd    Lecture5                 Lecture5.hs:163:1-63          7.1    0.0
+extendNode'  Main                     lab 5.1.hs:(63,1)-(66,48)     7.1   13.2
+CAF          GHC.IO.Encoding.CodePage <entire-module>               7.1    0.0
+freeInColumn Lecture5                 Lecture5.hs:(81,1)-(82,40)    0.0    1.5
+freeInRow    Lecture5                 Lecture5.hs:(77,1)-(78,41)    0.0    1.5
+subGrid      Lecture5                 Lecture5.hs:(70,1)-(71,40)    0.0    2.1
+showRow      Lecture5                 Lecture5.hs:(26,1)-(39,39)    0.0    3.6
+prune'       Main                     lab 5.1.hs:(70,1)-(75,46)     0.0   10.2
+freeAtPos'   Main                     lab 5.1.hs:(29,1)-(33,44)     0.0    3.0
+subExtraGrid Main                     lab 5.1.hs:23:1-63            0.0    2.0
+
+
+                                                                                                      individual      inherited
+COST CENTRE                  MODULE                   SRC                          no.     entries  %time %alloc   %time %alloc
+
+MAIN                         MAIN                     <built-in>                    47          0    7.1    0.0   100.0  100.0
+ CAF                         GHC.IO.Encoding.CodePage <entire-module>               77          0    7.1    0.0     7.1    0.0
+ CAF                         GHC.IO.Encoding          <entire-module>               74          0    0.0    0.0     0.0    0.0
+ CAF                         GHC.IO.Handle.Text       <entire-module>               64          0    0.0    0.0     0.0    0.0
+ CAF                         GHC.IO.Handle.FD         <entire-module>               60          0    0.0    0.8     0.0    0.8
+ CAF                         Main                     <entire-module>               55          0    0.0    0.0    85.7   94.9
+  blocks'                    Main                     lab 5.1.hs:17:1-25           136          1    0.0    0.0     0.0    0.0
+  main                       Main                     lab 5.1.hs:(104,1)-(105,29)   94          1    0.0    0.0    85.7   94.9
+   solveAndShow'             Main                     lab 5.1.hs:88:1-46            95          1    0.0    0.0    85.7   94.9
+    initNode'                Main                     lab 5.1.hs:(57,1)-(59,40)    102          1    0.0    0.0    28.6   32.2
+     consistent'             Main                     lab 5.1.hs:(45,1)-(54,85)    103          1    0.0    0.0     0.0    2.4
+      extragridInjective     Main                     lab 5.1.hs:(41,1)-(42,44)    132         36    0.0    0.0     0.0    1.7
+       extragridInjective.vs Main                     lab 5.1.hs:42:4-44           133         36    0.0    0.1     0.0    1.5
+        subExtraGrid         Main                     lab 5.1.hs:23:1-63           134         36    0.0    1.1     0.0    1.4
+         bl'                 Main                     lab 5.1.hs:20:1-40           135         72    0.0    0.4     0.0    0.4
+         initNode'.s         Main                     lab 5.1.hs:57:20-34          137          0    0.0    0.0     0.0    0.0
+          grid2sud           Lecture5                 Lecture5.hs:(58,1)-(61,39)   138          0    0.0    0.0     0.0    0.0
+           grid2sud.\        Lecture5                 Lecture5.hs:58:26-37         139        324    0.0    0.0     0.0    0.0
+            grid2sud.pos     Lecture5                 Lecture5.hs:61:3-39          140        324    0.0    0.0     0.0    0.0
+       injective             Lecture5                 Lecture5.hs:94:1-27          141         36    0.0    0.2     0.0    0.2
+      colInjective           Lecture5                 Lecture5.hs:(101,1)-(102,50) 115          9    0.0    0.0     0.0    0.1
+       colInjective.vs       Lecture5                 Lecture5.hs:102:4-50         116          9    0.0    0.1     0.0    0.1
+        initNode'.s          Main                     lab 5.1.hs:57:20-34          117          0    0.0    0.0     0.0    0.0
+         grid2sud            Lecture5                 Lecture5.hs:(58,1)-(61,39)   118          0    0.0    0.0     0.0    0.0
+          grid2sud.\         Lecture5                 Lecture5.hs:58:26-37         119         81    0.0    0.0     0.0    0.0
+           grid2sud.pos      Lecture5                 Lecture5.hs:61:3-39          120         81    0.0    0.0     0.0    0.0
+       injective             Lecture5                 Lecture5.hs:94:1-27          121          9    0.0    0.0     0.0    0.0
+      rowInjective           Lecture5                 Lecture5.hs:(97,1)-(98,50)   105          9    0.0    0.0     0.0    0.1
+       injective             Lecture5                 Lecture5.hs:94:1-27          114          9    0.0    0.0     0.0    0.0
+       rowInjective.vs       Lecture5                 Lecture5.hs:98:4-50          106          9    0.0    0.1     0.0    0.1
+        initNode'.s          Main                     lab 5.1.hs:57:20-34          109          0    0.0    0.0     0.0    0.0
+         grid2sud            Lecture5                 Lecture5.hs:(58,1)-(61,39)   110          0    0.0    0.0     0.0    0.0
+          grid2sud.\         Lecture5                 Lecture5.hs:58:26-37         111         81    0.0    0.0     0.0    0.0
+           grid2sud.pos      Lecture5                 Lecture5.hs:61:3-39          112         81    0.0    0.0     0.0    0.0
+      subgridInjective       Lecture5                 Lecture5.hs:(105,1)-(106,39) 122          9    0.0    0.0     0.0    0.4
+       injective             Lecture5                 Lecture5.hs:94:1-27          131          9    0.0    0.0     0.0    0.0
+       subgridInjective.vs   Lecture5                 Lecture5.hs:106:4-39         123          9    0.0    0.0     0.0    0.4
+        subGrid              Lecture5                 Lecture5.hs:(70,1)-(71,40)   124          9    0.0    0.3     0.0    0.4
+         bl                  Lecture5                 Lecture5.hs:67:1-38          125         18    0.0    0.1     0.0    0.1
+         initNode'.s         Main                     lab 5.1.hs:57:20-34          127          0    0.0    0.0     0.0    0.0
+          grid2sud           Lecture5                 Lecture5.hs:(58,1)-(61,39)   128          0    0.0    0.0     0.0    0.0
+           grid2sud.\        Lecture5                 Lecture5.hs:58:26-37         129         81    0.0    0.0     0.0    0.0
+            grid2sud.pos     Lecture5                 Lecture5.hs:61:3-39          130         81    0.0    0.0     0.0    0.0
+     constraints'            Main                     lab 5.1.hs:(36,1)-(38,49)    144          1    0.0    0.7    28.6   29.8
+      length3rd              Lecture5                 Lecture5.hs:163:1-63         150        303    0.0    0.0     0.0    0.0
+      freeAtPos'             Main                     lab 5.1.hs:(29,1)-(33,44)    151         62    0.0    3.0    28.6   29.0
+       freeInColumn          Lecture5                 Lecture5.hs:(81,1)-(82,40)   159         62    0.0    1.5    21.4    7.1
+        freeInSeq            Lecture5                 Lecture5.hs:74:1-29          160         62   21.4    5.6    21.4    5.6
+        initNode'.s          Main                     lab 5.1.hs:57:20-34          161          0    0.0    0.0     0.0    0.0
+         grid2sud            Lecture5                 Lecture5.hs:(58,1)-(61,39)   162          0    0.0    0.0     0.0    0.0
+          grid2sud.\         Lecture5                 Lecture5.hs:58:26-37         163        558    0.0    0.0     0.0    0.0
+           grid2sud.pos      Lecture5                 Lecture5.hs:61:3-39          164        558    0.0    0.0     0.0    0.0
+       freeInExtraSubgrid    Main                     lab 5.1.hs:26:1-61           173         62    0.0    0.0     7.1    3.7
+        freeInSeq            Lecture5                 Lecture5.hs:74:1-29          176         62    7.1    2.5     7.1    2.5
+        subExtraGrid         Main                     lab 5.1.hs:23:1-63           174         62    0.0    0.9     0.0    1.3
+         bl'                 Main                     lab 5.1.hs:20:1-40           175        102    0.0    0.3     0.0    0.3
+         initNode'.s         Main                     lab 5.1.hs:57:20-34          177          0    0.0    0.0     0.0    0.0
+          grid2sud           Lecture5                 Lecture5.hs:(58,1)-(61,39)   178          0    0.0    0.0     0.0    0.0
+           grid2sud.\        Lecture5                 Lecture5.hs:58:26-37         179        252    0.0    0.0     0.0    0.0
+            grid2sud.pos     Lecture5                 Lecture5.hs:61:3-39          180        252    0.0    0.0     0.0    0.0
+       freeInRow             Lecture5                 Lecture5.hs:(77,1)-(78,41)   152         62    0.0    1.5     0.0    7.1
+        freeInSeq            Lecture5                 Lecture5.hs:74:1-29          153         62    0.0    5.5     0.0    5.5
+        initNode'.s          Main                     lab 5.1.hs:57:20-34          155          0    0.0    0.0     0.0    0.0
+         grid2sud            Lecture5                 Lecture5.hs:(58,1)-(61,39)   156          0    0.0    0.0     0.0    0.0
+          grid2sud.\         Lecture5                 Lecture5.hs:58:26-37         157        558    0.0    0.0     0.0    0.0
+           grid2sud.pos      Lecture5                 Lecture5.hs:61:3-39          158        558    0.0    0.0     0.0    0.0
+       freeInSubgrid         Lecture5                 Lecture5.hs:85:1-51          165         62    0.0    0.0     0.0    8.1
+        freeInSeq            Lecture5                 Lecture5.hs:74:1-29          168         62    0.0    5.6     0.0    5.6
+        subGrid              Lecture5                 Lecture5.hs:(70,1)-(71,40)   166         62    0.0    1.8     0.0    2.4
+         bl                  Lecture5                 Lecture5.hs:67:1-38          167        124    0.0    0.6     0.0    0.6
+         initNode'.s         Main                     lab 5.1.hs:57:20-34          169          0    0.0    0.0     0.0    0.0
+          grid2sud           Lecture5                 Lecture5.hs:(58,1)-(61,39)   170          0    0.0    0.0     0.0    0.0
+           grid2sud.\        Lecture5                 Lecture5.hs:58:26-37         171        558    0.0    0.0     0.0    0.0
+            grid2sud.pos     Lecture5                 Lecture5.hs:61:3-39          172        558    0.0    0.0     0.0    0.0
+      openPositions          Lecture5                 Lecture5.hs:(158,1)-(160,42) 145          1    0.0    0.1     0.0    0.1
+       initNode'.s           Main                     lab 5.1.hs:57:20-34          146          0    0.0    0.0     0.0    0.0
+        grid2sud             Lecture5                 Lecture5.hs:(58,1)-(61,39)   147          0    0.0    0.0     0.0    0.0
+         grid2sud.\          Lecture5                 Lecture5.hs:58:26-37         148         81    0.0    0.0     0.0    0.0
+          grid2sud.pos       Lecture5                 Lecture5.hs:61:3-39          149         81    0.0    0.0     0.0    0.0
+     initNode'.s             Main                     lab 5.1.hs:57:20-34          107          1    0.0    0.0     0.0    0.0
+      grid2sud               Lecture5                 Lecture5.hs:(58,1)-(61,39)   108          1    0.0    0.0     0.0    0.0
+    solveShowNs'             Main                     lab 5.1.hs:91:1-50            96          1    0.0    0.0    57.1   62.7
+     solveNs'                Main                     lab 5.1.hs:85:1-34           100          1    0.0    0.0    57.1   62.7
+      search                 Lecture5                 Lecture5.hs:(188,1)-(191,57) 101        102    0.0    0.1    57.1   62.7
+       succNode'             Main                     lab 5.1.hs:(81,1)-(82,41)    181        100    0.0    0.0    57.1   62.6
+        extendNode'          Main                     lab 5.1.hs:(63,1)-(66,48)    182        100    7.1   13.2    57.1   62.6
+         length3rd           Lecture5                 Lecture5.hs:163:1-63         186       7668    7.1    0.0     7.1    0.0
+         prune'              Main                     lab 5.1.hs:(70,1)-(75,46)    183       3673    0.0   10.2    42.9   49.3
+          sameblock'         Main                     lab 5.1.hs:78:1-93           184       2922   21.4    2.5    42.9   39.2
+           bl                Lecture5                 Lecture5.hs:67:1-38          185       7352    7.1   22.0     7.1   22.0
+           bl'               Main                     lab 5.1.hs:20:1-40           187       6848   14.3   14.7    14.3   14.7
+       solved                Lecture5                 Lecture5.hs:131:1-19         143          0    0.0    0.0     0.0    0.0
+  problemGrid                Main                     lab 5.1.hs:(94,1)-(102,34)   113          1    0.0    0.0     0.0    0.0
+ CAF                         Lecture5                 <entire-module>               54          0    0.0    0.0     0.0    0.1
+  blocks                     Lecture5                 Lecture5.hs:19:1-31          126          1    0.0    0.0     0.0    0.0
+  extend                     Lecture5                 Lecture5.hs:118:1-15         195          1    0.0    0.0     0.0    0.0
+  positions                  Lecture5                 Lecture5.hs:15:1-18          104          1    0.0    0.0     0.0    0.0
+  showNode                   Lecture5                 Lecture5.hs:128:1-27         188          1    0.0    0.0     0.0    0.0
+  showSudoku                 Lecture5                 Lecture5.hs:64:1-32          190          1    0.0    0.0     0.0    0.0
+  solved                     Lecture5                 Lecture5.hs:131:1-19         142          1    0.0    0.0     0.0    0.0
+  values                     Lecture5                 Lecture5.hs:16:1-18          154          1    0.0    0.0     0.0    0.0
+ main                        Main                     lab 5.1.hs:(104,1)-(105,29)   97          0    0.0    0.0     0.0    4.2
+  solveAndShow'              Main                     lab 5.1.hs:88:1-46            98          0    0.0    0.0     0.0    4.2
+   initNode'                 Main                     lab 5.1.hs:(57,1)-(59,40)    209          0    0.0    0.0     0.0    0.0
+    initNode'.s              Main                     lab 5.1.hs:57:20-34          210          0    0.0    0.0     0.0    0.0
+     grid2sud                Lecture5                 Lecture5.hs:(58,1)-(61,39)   211          0    0.0    0.0     0.0    0.0
+      grid2sud.\             Lecture5                 Lecture5.hs:58:26-37         212         19    0.0    0.0     0.0    0.0
+       grid2sud.pos          Lecture5                 Lecture5.hs:61:3-39          213         19    0.0    0.0     0.0    0.0
+   solveShowNs'              Main                     lab 5.1.hs:91:1-50            99          0    0.0    0.0     0.0    4.2
+    showNode                 Lecture5                 Lecture5.hs:128:1-27         189          0    0.0    0.0     0.0    4.2
+     showSudoku              Lecture5                 Lecture5.hs:64:1-32          191          0    0.0    0.0     0.0    4.2
+      showGrid               Lecture5                 Lecture5.hs:(42,1)-(49,42)   193          1    0.0    0.3     0.0    3.9
+       showRow               Lecture5                 Lecture5.hs:(26,1)-(39,39)   194          9    0.0    3.6     0.0    3.7
+        showVal              Lecture5                 Lecture5.hs:(22,1)-(23,18)   208         81    0.0    0.1     0.0    0.1
+      sud2grid               Lecture5                 Lecture5.hs:(54,1)-(55,45)   192          1    0.0    0.3     0.0    0.3
+       solveNs'              Main                     lab 5.1.hs:85:1-34           200          0    0.0    0.0     0.0    0.0
+        search               Lecture5                 Lecture5.hs:(188,1)-(191,57) 201          0    0.0    0.0     0.0    0.0
+         succNode'           Main                     lab 5.1.hs:(81,1)-(82,41)    202          0    0.0    0.0     0.0    0.0
+          extendNode'        Main                     lab 5.1.hs:(63,1)-(66,48)    203          0    0.0    0.0     0.0    0.0
+           extend            Lecture5                 Lecture5.hs:118:1-15         204          0    0.0    0.0     0.0    0.0
+            update           Lecture5                 Lecture5.hs:121:1-44         205       3070    0.0    0.0     0.0    0.0
+             initNode'       Main                     lab 5.1.hs:(57,1)-(59,40)    214          0    0.0    0.0     0.0    0.0
+    solveNs'                 Main                     lab 5.1.hs:85:1-34           196          0    0.0    0.0     0.0    0.0
+     search                  Lecture5                 Lecture5.hs:(188,1)-(191,57) 197          0    0.0    0.0     0.0    0.0
+      succNode'              Main                     lab 5.1.hs:(81,1)-(82,41)    198          0    0.0    0.0     0.0    0.0
+       extendNode'           Main                     lab 5.1.hs:(63,1)-(66,48)    199          0    0.0    0.0     0.0    0.0
+        extend               Lecture5                 Lecture5.hs:118:1-15         206          0    0.0    0.0     0.0    0.0
+         update              Lecture5                 Lecture5.hs:121:1-44         207         61    0.0    0.0     0.0    0.0
