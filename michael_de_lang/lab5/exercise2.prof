@@ -1,0 +1,128 @@
+	Tue Oct 03 13:38 2017 Time and Allocation Profiling Report  (Final)
+
+	   exercise2.exe +RTS -p -RTS
+
+	total time  =        0.16 secs   (162 ticks @ 1000 us, 1 processor)
+	total alloc =  41,995,032 bytes  (excludes profiling overheads)
+
+COST CENTRE   MODULE    SRC                            %time %alloc
+
+bl            Lecture5  Lecture5.hs:67:1-38             22.2   22.5
+extraBlocks   Main      exercise2.hs:(9,1)-(13,34)      16.7   27.3
+sameblock2    Main      exercise2.hs:(140,1)-(142,36)   14.2   11.0
+freeAtPos2.ys Main      exercise2.hs:108:4-30           12.3    0.2
+length3rd     Lecture5  Lecture5.hs:163:1-63            10.5    6.8
+prune2        Main      exercise2.hs:(132,1)-(137,46)    7.4    7.6
+freeAtPos2    Main      exercise2.hs:(107,1)-(110,50)    4.9   11.3
+extendNode2   Main      exercise2.hs:(125,1)-(128,48)    4.3    6.4
+grid2sud.pos  Lecture5  Lecture5.hs:61:3-39              2.5    2.4
+update        Lecture5  Lecture5.hs:121:1-44             1.9    0.0
+showRow       Lecture5  Lecture5.hs:(26,1)-(39,39)       1.2    1.8
+
+
+                                                                                                         individual      inherited
+COST CENTRE                    MODULE                   SRC                           no.     entries  %time %alloc   %time %alloc
+
+MAIN                           MAIN                     <built-in>                     47          0    0.0    0.0   100.0  100.0
+ CAF                           GHC.IO.Encoding.CodePage <entire-module>                83          0    0.0    0.0     0.0    0.0
+ CAF                           GHC.IO.Handle.Text       <entire-module>                81          0    0.0    0.0     0.0    0.0
+ CAF                           GHC.IO.Encoding          <entire-module>                78          0    0.0    0.0     0.0    0.0
+ CAF                           GHC.IO.Handle.FD         <entire-module>                70          0    0.0    0.1     0.0    0.1
+ CAF                           Main                     <entire-module>                55          0    0.0    0.0    99.4   98.4
+  allConstraints               Main                     exercise2.hs:104:1-85         143          1    0.0    0.0     0.0    0.0
+  blockConstrnt                Main                     exercise2.hs:102:1-74         147          1    0.0    0.0     0.0    0.0
+  columnConstrnt               Main                     exercise2.hs:101:1-55         146          1    0.0    0.0     0.0    0.0
+  extraBlockConstrnt           Main                     exercise2.hs:103:1-97         148          1    0.0    0.0     0.0    0.0
+  main                         Main                     exercise2.hs:(168,1)-(172,29)  94          1    0.0    0.0    99.4   98.3
+   solveAndShow2               Main                     exercise2.hs:152:1-46          96          4    0.0    0.0    99.4   98.3
+    initNode2                  Main                     exercise2.hs:(120,1)-(122,40) 102          4    0.0    0.0    22.2   15.2
+     consistent                Lecture5                 Lecture5.hs:(109,1)-(115,47)  103          4    0.6    0.1     1.9    0.9
+      colInjective             Lecture5                 Lecture5.hs:(101,1)-(102,50)  115         36    0.0    0.0     1.2    0.2
+       colInjective.vs         Lecture5                 Lecture5.hs:102:4-50          117         36    0.0    0.1     0.6    0.2
+        initNode2.s            Main                     exercise2.hs:120:20-34        118          0    0.0    0.0     0.6    0.1
+         grid2sud              Lecture5                 Lecture5.hs:(58,1)-(61,39)    119          0    0.0    0.0     0.6    0.1
+          grid2sud.\           Lecture5                 Lecture5.hs:58:26-37          120        324    0.0    0.0     0.6    0.1
+           grid2sud.pos        Lecture5                 Lecture5.hs:61:3-39           121        324    0.6    0.1     0.6    0.1
+       injective               Lecture5                 Lecture5.hs:94:1-27           116         36    0.6    0.0     0.6    0.0
+      rowInjective             Lecture5                 Lecture5.hs:(97,1)-(98,50)    105         36    0.0    0.0     0.0    0.2
+       injective               Lecture5                 Lecture5.hs:94:1-27           106         36    0.0    0.0     0.0    0.0
+       rowInjective.vs         Lecture5                 Lecture5.hs:98:4-50           107         36    0.0    0.1     0.0    0.2
+        initNode2.s            Main                     exercise2.hs:120:20-34        110          0    0.0    0.0     0.0    0.1
+         grid2sud              Lecture5                 Lecture5.hs:(58,1)-(61,39)    111          0    0.0    0.0     0.0    0.1
+          grid2sud.\           Lecture5                 Lecture5.hs:58:26-37          112        324    0.0    0.0     0.0    0.1
+           grid2sud.pos        Lecture5                 Lecture5.hs:61:3-39           113        324    0.0    0.1     0.0    0.1
+      subgridInjective         Lecture5                 Lecture5.hs:(105,1)-(106,39)  122         36    0.0    0.0     0.0    0.4
+       injective               Lecture5                 Lecture5.hs:94:1-27           123         36    0.0    0.0     0.0    0.0
+       subgridInjective.vs     Lecture5                 Lecture5.hs:106:4-39          124         36    0.0    0.0     0.0    0.3
+        subGrid                Lecture5                 Lecture5.hs:(70,1)-(71,40)    125         36    0.0    0.1     0.0    0.3
+         bl                    Lecture5                 Lecture5.hs:67:1-38           126        144    0.0    0.1     0.0    0.1
+         initNode2.s           Main                     exercise2.hs:120:20-34        128          0    0.0    0.0     0.0    0.1
+          grid2sud             Lecture5                 Lecture5.hs:(58,1)-(61,39)    129          0    0.0    0.0     0.0    0.1
+           grid2sud.\          Lecture5                 Lecture5.hs:58:26-37          130        324    0.0    0.0     0.0    0.1
+            grid2sud.pos       Lecture5                 Lecture5.hs:61:3-39           131        324    0.0    0.1     0.0    0.1
+     constraints2              Main                     exercise2.hs:(115,1)-(117,49) 134          4    0.0    0.3    20.4   14.3
+      length3rd                Lecture5                 Lecture5.hs:163:1-63          140       1212    0.6    0.2     0.6    0.2
+      freeAtPos2               Main                     exercise2.hs:(107,1)-(110,50) 141        248    4.9   11.3    19.1   13.6
+       freeAtPos2.ys           Main                     exercise2.hs:108:4-30         142        248   12.3    0.2    12.3    0.2
+       initNode2.s             Main                     exercise2.hs:120:20-34        149          0    0.0    0.0     1.9    2.1
+        grid2sud               Lecture5                 Lecture5.hs:(58,1)-(61,39)    150          0    0.0    0.0     1.9    2.1
+         grid2sud.\            Lecture5                 Lecture5.hs:58:26-37          151       7704    0.6    0.0     1.9    2.1
+          grid2sud.pos         Lecture5                 Lecture5.hs:61:3-39           152       7704    1.2    2.1     1.2    2.1
+      openPositions            Lecture5                 Lecture5.hs:(158,1)-(160,42)  135          4    0.0    0.1     0.6    0.2
+       initNode2.s             Main                     exercise2.hs:120:20-34        136          0    0.0    0.0     0.6    0.1
+        grid2sud               Lecture5                 Lecture5.hs:(58,1)-(61,39)    137          0    0.0    0.0     0.6    0.1
+         grid2sud.\            Lecture5                 Lecture5.hs:58:26-37          138        324    0.0    0.0     0.6    0.1
+          grid2sud.pos         Lecture5                 Lecture5.hs:61:3-39           139        324    0.6    0.1     0.6    0.1
+     initNode2.s               Main                     exercise2.hs:120:20-34        108          4    0.0    0.0     0.0    0.0
+      grid2sud                 Lecture5                 Lecture5.hs:(58,1)-(61,39)    109          4    0.0    0.0     0.0    0.0
+    solveShowNs2               Main                     exercise2.hs:155:1-50          98          0    0.0    0.0    77.2   83.1
+     showNode                  Lecture5                 Lecture5.hs:128:1-27          166          0    0.0    0.0     2.5    0.6
+      showSudoku               Lecture5                 Lecture5.hs:64:1-32           168          0    0.0    0.0     2.5    0.6
+       showGrid                Lecture5                 Lecture5.hs:(42,1)-(49,42)    169          4    0.0    0.1     0.6    0.4
+        showRow                Lecture5                 Lecture5.hs:(26,1)-(39,39)    174         36    0.6    0.3     0.6    0.4
+         showVal               Lecture5                 Lecture5.hs:(22,1)-(23,18)    176        324    0.0    0.0     0.0    0.0
+       sud2grid                Lecture5                 Lecture5.hs:(54,1)-(55,45)    170          4    0.0    0.2     1.9    0.2
+        solveNs2               Main                     exercise2.hs:149:1-34         184          0    0.0    0.0     1.9    0.0
+         search                Lecture5                 Lecture5.hs:(188,1)-(191,57)  185          0    0.0    0.0     1.9    0.0
+          succNode2            Main                     exercise2.hs:(145,1)-(146,41) 186          0    0.0    0.0     1.9    0.0
+           extendNode2         Main                     exercise2.hs:(125,1)-(128,48) 187          0    0.0    0.0     1.9    0.0
+            extend             Lecture5                 Lecture5.hs:118:1-15          188          0    0.0    0.0     1.9    0.0
+             update            Lecture5                 Lecture5.hs:121:1-44          189      12524    1.9    0.0     1.9    0.0
+              initNode2        Main                     exercise2.hs:(120,1)-(122,40) 190          0    0.0    0.0     0.0    0.0
+               initNode2.s     Main                     exercise2.hs:120:20-34        191          0    0.0    0.0     0.0    0.0
+                grid2sud       Lecture5                 Lecture5.hs:(58,1)-(61,39)    192          0    0.0    0.0     0.0    0.0
+                 grid2sud.\    Lecture5                 Lecture5.hs:58:26-37          193         76    0.0    0.0     0.0    0.0
+                  grid2sud.pos Lecture5                 Lecture5.hs:61:3-39           194         76    0.0    0.0     0.0    0.0
+     solveNs2                  Main                     exercise2.hs:149:1-34         100          0    0.0    0.0    74.7   82.5
+      search                   Lecture5                 Lecture5.hs:(188,1)-(191,57)  101        528    0.0    0.2    74.7   82.5
+       succNode2               Main                     exercise2.hs:(145,1)-(146,41) 153        520    0.0    0.0    74.7   82.3
+        extendNode2            Main                     exercise2.hs:(125,1)-(128,48) 154        520    4.3    6.4    74.7   82.3
+         length3rd             Lecture5                 Lecture5.hs:163:1-63          158      34368    9.9    6.5     9.9    6.5
+         prune2                Main                     exercise2.hs:(132,1)-(137,46) 155      16928    7.4    7.6    60.5   69.3
+          sameblock2           Main                     exercise2.hs:(140,1)-(142,36) 156      13156   14.2   11.0    53.1   61.7
+           bl                  Lecture5                 Lecture5.hs:67:1-38           157      32928   22.2   22.3    22.2   22.3
+           sameblock2.extra1   Main                     exercise2.hs:141:11-36        159      12228    0.0    0.7    13.0   18.4
+            extraBlocks        Main                     exercise2.hs:(9,1)-(13,34)    160      12228   13.0   17.7    13.0   17.7
+           sameblock2.extra2   Main                     exercise2.hs:142:11-36        161       7496    0.0    0.4     3.7   10.0
+            extraBlocks        Main                     exercise2.hs:(9,1)-(13,34)    162       7496    3.7    9.6     3.7    9.6
+         extend                Lecture5                 Lecture5.hs:118:1-15          178          0    0.0    0.0     0.0    0.0
+       solved                  Lecture5                 Lecture5.hs:131:1-19          133          0    0.0    0.0     0.0    0.0
+  problemGrid                  Main                     exercise2.hs:(158,1)-(166,34) 114          1    0.0    0.0     0.0    0.0
+  rowConstrnt                  Main                     exercise2.hs:100:1-52         144          1    0.0    0.0     0.0    0.0
+  solveNs2                     Main                     exercise2.hs:149:1-34          99          1    0.0    0.0     0.0    0.0
+  solveShowNs2                 Main                     exercise2.hs:155:1-50          97          1    0.0    0.0     0.0    0.0
+ CAF                           Lecture5                 <entire-module>                54          0    0.0    0.0     0.0    0.0
+  blocks                       Lecture5                 Lecture5.hs:19:1-31           127          1    0.0    0.0     0.0    0.0
+  extend                       Lecture5                 Lecture5.hs:118:1-15          177          1    0.0    0.0     0.0    0.0
+  positions                    Lecture5                 Lecture5.hs:15:1-18           104          1    0.0    0.0     0.0    0.0
+  showNode                     Lecture5                 Lecture5.hs:128:1-27          165          1    0.0    0.0     0.0    0.0
+  showSudoku                   Lecture5                 Lecture5.hs:64:1-32           167          1    0.0    0.0     0.0    0.0
+  solved                       Lecture5                 Lecture5.hs:131:1-19          132          1    0.0    0.0     0.0    0.0
+  values                       Lecture5                 Lecture5.hs:16:1-18           145          1    0.0    0.0     0.0    0.0
+ main                          Main                     exercise2.hs:(168,1)-(172,29)  95          0    0.0    0.0     0.6    1.5
+  solveAndShow2                Main                     exercise2.hs:152:1-46         163          0    0.0    0.0     0.6    1.5
+   solveShowNs2                Main                     exercise2.hs:155:1-50         164          0    0.0    0.0     0.6    1.5
+    showNode                   Lecture5                 Lecture5.hs:128:1-27          171          0    0.0    0.0     0.6    1.5
+     showSudoku                Lecture5                 Lecture5.hs:64:1-32           172          0    0.0    0.0     0.6    1.5
+      showGrid                 Lecture5                 Lecture5.hs:(42,1)-(49,42)    173          0    0.0    0.1     0.6    1.5
+       showRow                 Lecture5                 Lecture5.hs:(26,1)-(39,39)    175          0    0.6    1.5     0.6    1.5
