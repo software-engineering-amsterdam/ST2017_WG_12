@@ -94,14 +94,24 @@ solveNs' = search succNode' solved
 solveShowNs' :: [Node] -> IO[()]
 solveShowNs' = sequence . fmap showNode . solveNs'  
 
+-- Exercise 3
+-- Time spent:
+
+isMinimal :: Node -> Bool
+isMinimal n = n == minimalize n allConstrnt
+
+
+
 -- Exercise 4
 -- Time spent:
+
+--empty :: Grid -> Grid
 
 
 -- Exercise 5
 -- Time spent: 30 minutes
 emptyNrc :: Node
-emptyNrc = (\ _ -> 0,constraints' (\ _ -> 0))
+emptyNrc = (\ _ -> 0, constraints' (\ _ -> 0))
 
 rsolveNs' :: [Node] -> IO [Node]
 rsolveNs' ns = rsearch' rsuccNode' solved (return ns)
