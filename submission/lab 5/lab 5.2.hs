@@ -20,7 +20,7 @@ type Constrnt = [[Position]]
 -- Everytime you have a new constraint, you need to alter allConstraints AND sameblock/prune. 
 -- 
 -- Regarding the performance characteristics, the output is in exercise1.prof and exercise2.prof:
--- refactoring the code leads to a lower memory requirement of 9,5% but has a negligible impact on total time taken.
+-- refactoring the code leads to a lower memory requirement of 3,9% but has a negligible impact on total time taken.
 
 
 blocks' :: [[Int]]
