@@ -1,6 +1,5 @@
 import Lecture6 hiding (composites)
 import Control.Monad
-import Debug.Trace
 
 composites :: [Integer]
 composites = [x | x <- [2..], not (prime x)]
@@ -27,9 +26,9 @@ minFool' k x 0 = return x;
 minFool' k x n = do
     newX' <- newX
     if newX' < x then
-        trace (show newX' ++ " - " ++ show x) $ minFool' k newX' (n-1)
+        minFool' k newX' (n-1)
     else
-        trace (show newX' ++ " " ++ show x) $ minFool' k x (n-1)
+        minFool' k x (n-1)
     where newX = firstFool k
 
 minFool :: Int -> IO Integer
@@ -39,5 +38,11 @@ minFool k = do
     
     
 main = do
+    x <- minFool 1
+    print $ "k = 1: " ++ show x
+    x <- minFool 2
+    print $ "k = 2: " ++ show x
+    x <- minFool 3
+    print $ "k = 3: " ++ show x
     x <- minFool 4
-    print x
+    print $ "k = 4: " ++ show x
