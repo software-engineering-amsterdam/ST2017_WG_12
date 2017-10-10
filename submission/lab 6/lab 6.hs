@@ -34,7 +34,6 @@ exerciseOne = do
 -- Constantijn: 5m
 -- Niels: 5m 
 
--- TODO run profiling on actual exercise 1 and 2.
 -- See exercise1.prof and exercise2.prof
 
 exerciseTwo = print $ exM 2342 32454232 6
@@ -59,8 +58,8 @@ composites = [x | x <- [2..], not (prime x)]
 -- Niels: 45m 
 
 -- https://stackoverflow.com/questions/1133800/haskell-monadic-takewhile
-sequenceWhile :: (Monad m) => (a -> Bool) -> [m a] -> m [a]
-sequenceWhile p xs = foldr (myLiftM2 (:) []) (return []) xs
+sequenceUntil :: (Monad m) => (a -> Bool) -> [m a] -> m [a]
+sequenceUntil p xs = foldr (myLiftM2 (:) []) (return []) xs
   where myLiftM2 f z m1 m2 = do
             x1 <- m1
             if p x1 then do x2 <- m2
@@ -73,7 +72,7 @@ printFirstFooled comp ms = do
     return $ comp !! (length ys)
     
 firstFool :: [Integer] -> Int -> IO Integer
-firstFool comp k = printFirstFooled comp $ sequenceWhile (== False) $ map (primeTestsF k) comp
+firstFool comp k = printFirstFooled comp $ sequenceUntil (== False) $ map (primeTestsF k) comp
 
 minFool' :: [Integer] -> Int -> Integer -> Int -> IO Integer
 minFool' comp k x 0 = return x;
@@ -104,6 +103,10 @@ exerciseFour = do
     print $ "k = 4: " ++ show x
     
 {-
+primeTestsF is a function that uses probability to check whether a number is a prime or not. Running this test 100 times generates a certain distribution
+based on the given k. Increasing the k to 4, for example, leaves it incredibly unlikely for primeTestsF to mark 9 as a prime, but it still happens every 
+once in a blue moon.
+
 Output when put into its own file and compiled:
 oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ghc -O2 exercise4.hs
 [2 of 2] Compiling Main             ( exercise4.hs, exercise4.o )
@@ -118,10 +121,14 @@ oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ./exercise4
 
 -- exercise 5
 --time taken:
--- Michael: 10m
--- Arjan: 5m
--- Constantijn: 15m
--- Niels: 15m 
+-- Michael: 30m
+-- Arjan: 25m
+-- Constantijn: 35m
+-- Niels: 35m 
+
+-- The chance of a carmichael number being marked as prime is bigger than 
+-- a random composite number. We compared the chance of the first carmichael number passing as prime to 
+-- the chance of the composite number 15. On average, carmichael passes for a prime 94 times and the number 15 passes 19 times.
 
 carmichael :: [Integer]
 carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) | 
@@ -131,17 +138,17 @@ carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) |
       prime (18*k+1) ]
 
 exerciseFive = do
-    x <- minFool carmichael 0
-    print $ x
+    xs <- sequence $ map (\x -> primeTestsF 1 $ carmichael !! 0) [1..100]
+    ys <- sequence $ map (\x -> primeTestsF 1 $ composites !! 7) [1..100]
+    print $ length $ filter (== True) xs
+    print $ length $ filter (== True) ys
+
     
 {-
 Output when put into its own file and compiled:
-C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>ghc -O2 exercise5.hs
-[2 of 2] Compiling Main             ( exercise5.hs, exercise5.o )
-Linking exercise5.exe ...
-
-C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>exercise5.exe
-294409
+*Main> main
+94
+19
 -}
 
 -- exercise 6
@@ -150,17 +157,96 @@ C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>exercise5.exe
 -- Arjan: 0m
 -- Constantijn: 0m
 -- Niels: 10m
+
 --time taken 6b:
 -- Michael: 10m
 -- Arjan: 10m
 -- Constantijn: 10m
 -- Niels: 10m
 
-main = do
+-- 6a:
+-- primeMR is significantly more accurate than primeTestsF, though still not 100%.
+
+-- 6b:
+-- For the first 9 primes we can say that the primeMR function correctly identifies mersenne primes.
+-- After the 9th prime, computation time becomes a problem.
+
+exerciseSix = do
     print "6a"
-    x <- sequence $ map (\x -> primeMR 1 x) $ take 1 carmichael
-    print $ x
+    xs <- sequence $ map (\x -> primeTestsF 1 $ carmichael !! 0) [1..100]
+    ys <- sequence $ map (\x -> primeMR 1 $ carmichael !! 0) [1..100]
+    print $ length $ filter (== True) xs
+    print $ length $ filter (== True) ys
     
     print "6b"
     y <- sequence $ map (\x -> primeMR 2 $ 2^x - 1) $ take 9 primes
     print $ zip y primes
+
+{-
+*Main> exerciseSix
+"6a"
+94
+6
+"6b"
+[(True,2),(True,3),(True,5),(True,7),(False,11),(True,13),(True,17),(True,19),(False,23)]
+-}
+    
+    
+-- Exercise 7 Bonus
+-- Source of the toBin-function
+-- https://stackoverflow.com/questions/9166148/how-to-implement-decimal-to-binary-function-in-haskell
+toBin 0 = [0]
+toBin n = reverse (helper n)
+
+helper 0 = []
+helper n | n `mod` 2 == 1 = 1 : helper (n `div` 2)
+         | n `mod` 2 == 0 = 0 : helper (n `div` 2)
+
+nthPrime :: Int -> Integer
+nthPrime x = primes !! x         
+
+bitLength :: Integer -> Int
+bitLength x = length (toBin x)
+         
+primesWithBitLength :: Int -> [Integer]
+primesWithBitLength n = filter (\x -> bitLength x == n) (takeWhile (\x -> bitLength x < (n + 1)) primes)
+            
+-- Inspiration for generating all possible tuples
+-- https://codereview.stackexchange.com/questions/152190/producing-all-possible-combinations-of-a-listhttps://codereview.stackexchange.com/questions/152190/producing-all-possible-combinations-of-a-list
+createGroups :: [a] -> [(a, a)]
+createGroups [] = []
+createGroups (x:xs) = map ((,) x) xs ++ createGroups xs  
+
+primePairs :: Int -> [(Integer, Integer)]
+primePairs x = createGroups (primesWithBitLength x)
+
+encodeDecodeCheck :: (Integer, Integer) -> Integer -> Bool
+encodeDecodeCheck (x,y) message = message == rsaDecode private (rsaEncode public message)
+                        where 
+                        public = rsaPublic x y
+                        private = rsaPrivate x y
+
+exerciseSeven = do
+                let x = head (primePairs 5)
+                print $ encodeDecodeCheck x 10
+                        
+{-
+proof!
+Lab6> let x = head (primePairs 15)
+*Lab6> x
+(16411,16417)
+*Lab6> encodeDecodeCheck x 10
+True
+*Lab6> encodeDecodeCheck x (2^24)
+True
+*Lab6> encodeDecodeCheck x (2^25)
+True
+*Lab6> encodeDecodeCheck x (2^26)
+True
+*Lab6> encodeDecodeCheck x (2^27)
+True
+*Lab6>
+-}
+        
+    
+    

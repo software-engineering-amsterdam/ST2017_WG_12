@@ -69,7 +69,6 @@ exerciseSixA = primalityCheck (primeMR 1) carmichael
 exerciseSixB =  primalityCheck (primeMR 1) [2^x-1 | x <- primes]
 
 -- Exercise 7 Bonus
-
 -- Source of the toBin-function
 -- https://stackoverflow.com/questions/9166148/how-to-implement-decimal-to-binary-function-in-haskell
 toBin 0 = [0]
