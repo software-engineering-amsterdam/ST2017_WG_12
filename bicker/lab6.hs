@@ -34,7 +34,7 @@ primalityTest f (x:xs) = do
     primalityTest f xs
 
 -- k = 1, lowest composite found 9
--- k = 2, lowest composite found 27
+-- k = 2, lowest composite found 9
 -- k = 3, lowest composite found 45
 
 exerciseFour k = do
