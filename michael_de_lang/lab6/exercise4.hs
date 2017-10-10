@@ -47,7 +47,7 @@ main = do
     x <- minFool 4
     print $ "k = 4: " ++ show x
     
-    
+-- time taken 60m
 {-
 oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ghc -O2 exercise4.hs
 [2 of 2] Compiling Main             ( exercise4.hs, exercise4.o )

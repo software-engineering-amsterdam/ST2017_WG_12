@@ -1,6 +1,5 @@
 import Lecture6 hiding (composites)
 import Control.Monad
-import Debug.Trace
 
 carmichael :: [Integer]
 carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) | 
@@ -32,27 +31,26 @@ minFool' x 0 = return x;
 minFool' x n = do
     newX' <- newX
     if newX' < x then
-        trace (show newX' ++ " " ++ show x ++ " " ++ show n) $ minFool' newX' (n-1)
+        minFool' newX' (n-1)
     else
-        trace (show newX' ++ " " ++ show x ++ " " ++ show n) $ minFool' x (n-1)
+        minFool' x (n-1)
     where newX = firstFool
 
 minFool :: IO Integer
 minFool = do
     x <- firstFool
-    minFool' x 100
+    minFool' x 5
     
 main = do
     x <- minFool
     print $ x
     
-    
+-- time taken 10m
 {-
-oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ghc -O2 exercise4.hs
-[2 of 2] Compiling Main             ( exercise4.hs, exercise4.o )
-Linking exercise4 ...
-oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ./exercise4     "k = 1: 9"
-"k = 2: 9"
-"k = 3: 15"
-"k = 4: 15"
+C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>ghc -O2 exercise5.hs
+[2 of 2] Compiling Main             ( exercise5.hs, exercise5.o )
+Linking exercise5.exe ...
+
+C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>exercise5.exe
+294409
 -}
