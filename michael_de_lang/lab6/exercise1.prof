@@ -1,0 +1,33 @@
+	Mon Oct 09 14:56 2017 Time and Allocation Profiling Report  (Final)
+
+	   exercise1.exe +RTS -p -RTS
+
+	total time  =        0.46 secs   (463 ticks @ 1000 us, 1 processor)
+	total alloc =  89,123,968 bytes  (excludes profiling overheads)
+
+COST CENTRE       MODULE SRC                          %time %alloc
+
+exM'              Main   exercise1.hs:(13,1)-(17,38)   43.6   39.3
+exM''             Main   exercise1.hs:(8,1)-(10,32)    25.9   25.1
+highestPower      Main   exercise1.hs:(4,1)-(5,60)     21.0   16.7
+exM''.halfSquared Main   exercise1.hs:10:11-32          5.8   12.5
+exM'.halfSquared  Main   exercise1.hs:17:11-38          2.6    6.3
+
+
+                                                                                               individual      inherited
+COST CENTRE            MODULE                   SRC                         no.     entries  %time %alloc   %time %alloc
+
+MAIN                   MAIN                     <built-in>                   48          0    0.0    0.0   100.0  100.0
+ CAF                   GHC.IO.Encoding.CodePage <entire-module>              79          0    0.0    0.0     0.0    0.0
+ CAF                   GHC.IO.Encoding          <entire-module>              76          0    0.0    0.0     0.0    0.0
+ CAF                   GHC.IO.Handle.Text       <entire-module>              67          0    0.0    0.0     0.0    0.0
+ CAF                   GHC.IO.Handle.FD         <entire-module>              61          0    0.0    0.0     0.0    0.0
+ CAF                   Main                     <entire-module>              56          0    0.0    0.0    99.8   99.9
+  main                 Main                     exercise1.hs:19:1-34         96          1    0.0    0.0    99.8   99.9
+   exM'                Main                     exercise1.hs:(13,1)-(17,38)  98    1398101   43.6   39.3    99.8   99.9
+    exM''              Main                     exercise1.hs:(8,1)-(10,32)  102     699050   25.9   25.1    31.7   37.6
+     exM''.halfSquared Main                     exercise1.hs:10:11-32       103     699050    5.8   12.5     5.8   12.5
+    exM'.halfSquared   Main                     exercise1.hs:17:11-38       101     349525    2.6    6.3     2.6    6.3
+    exM'.squared       Main                     exercise1.hs:16:11-38        99     349525    0.9    0.0    21.8   16.7
+     highestPower      Main                     exercise1.hs:(4,1)-(5,60)   100    1631110   21.0   16.7    21.0   16.7
+ main                  Main                     exercise1.hs:19:1-34         97          0    0.2    0.0     0.2    0.0
