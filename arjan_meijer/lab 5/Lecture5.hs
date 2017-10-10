@@ -1,4 +1,7 @@
+<<<<<<< HEAD
+=======
 
+>>>>>>> 776ba3ca9de10d94c4459710d1255f24d469c9ca
 module Lecture5
 
 where 
@@ -11,6 +14,22 @@ type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
 
+<<<<<<< HEAD
+type Position = (Row,Column)
+type Constrnt = [[Position]]
+
+rowConstrnt = [[(r,c)| c <- values] | r <- values]
+columnConstrnt = [[(r,c) |r <- values] | c <- values]
+blockConstrnt = [[(r,c) | r <- b1, c <- b2] | b1 <- blocks, b2 <- blocks]
+
+freeAtPos' :: Sudoku -> Position -> Constrnt -> [Value]
+freeAtPos' s (r,c) xs = let
+    ys = filter (elem (r,c)) xs
+  in
+    foldl1 intersect (map ((values \\) . map s) ys)
+
+=======
+>>>>>>> 776ba3ca9de10d94c4459710d1255f24d469c9ca
 positions, values :: [Int]
 positions = [1..9]
 values    = [1..9] 
@@ -347,5 +366,13 @@ genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
 
+<<<<<<< HEAD
+main :: IO ()
+main = do [r] <- rsolveNs [emptyN]
+          showNode r
+          s  <- genProblem r
+          showNode s
+=======
 
+>>>>>>> 776ba3ca9de10d94c4459710d1255f24d469c9ca
 

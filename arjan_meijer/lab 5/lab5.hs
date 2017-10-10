@@ -1,5 +1,8 @@
 module Lab5 where
 
+<<<<<<< HEAD
+import Lecture5
+=======
 import Lecture5
 import Data.List
 import Control.Monad
@@ -108,3 +111,4 @@ exerciseFour n = do
                  [r] <- rsolveNs [emptyN]
                  y <- e4 (sud2grid (fst r)) n
                  return True
+>>>>>>> 776ba3ca9de10d94c4459710d1255f24d469c9ca
