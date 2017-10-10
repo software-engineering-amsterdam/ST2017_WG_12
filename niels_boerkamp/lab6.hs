@@ -61,10 +61,34 @@ exerciseFive = primalityCheck (primeTestsF 1) carmichael
 -- to every base b relatively prime to the number, even though it is not actually prime.
 
 -- Exerise 6a
+-- Time spent: 10m
 exerciseSixA = primalityCheck (primeMR 1) carmichael
 
 -- Exercise 6b
+-- Time spent: 10m
 exerciseSixB =  primalityCheck (primeMR 1) [2^x-1 | x <- primes]
 
+-- Exercise 7 Bonus
 
+-- Source of the toBin-function
+-- https://stackoverflow.com/questions/9166148/how-to-implement-decimal-to-binary-function-in-haskell
+toBin 0 = [0]
+toBin n = reverse (helper n)
 
+helper 0 = []
+helper n | n `mod` 2 == 1 = 1 : helper (n `div` 2)
+         | n `mod` 2 == 0 = 0 : helper (n `div` 2)
+
+nthPrime :: Int -> Integer
+nthPrime x = primes !! x         
+
+bitLength :: Int -> Int
+bitLength x = length (toBin x)
+         
+         
+primePairs :: Int -> Int -> [(Integer, Integer)] -> [(Integer, Integer)]
+primePairs x y [] = primePairs x y []
+            where 
+            p1 = nthPrime x
+            p2 = nthPrime y
+            validPair = p1 /= p2 && bitLength p1 == bitLength p2
