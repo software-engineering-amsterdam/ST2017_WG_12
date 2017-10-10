@@ -38,6 +38,8 @@ minFool k = do
     
     
 main = do
+    x <- minFool 0
+    print $ "k = 0: " ++ show x
     x <- minFool 1
     print $ "k = 1: " ++ show x
     x <- minFool 2
@@ -52,7 +54,9 @@ main = do
 oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ghc -O2 exercise4.hs
 [2 of 2] Compiling Main             ( exercise4.hs, exercise4.o )
 Linking exercise4 ...
-oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ./exercise4     "k = 1: 9"
+oipo@sd-59673:~/uva/software_testing/STS1/michael_de_lang/lab6$ ./exercise4
+"k = 0: 4"
+"k = 1: 9"
 "k = 2: 9"
 "k = 3: 15"
 "k = 4: 15"
