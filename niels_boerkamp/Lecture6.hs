@@ -204,7 +204,7 @@ rsaPrivate p q = let
    (d,p*q)
 
 rsaEncode :: (Integer,Integer) -> Integer -> Integer 
-rsaEncode (e,n) m =  exM m e n
+rsaEncode (e,n) m =  expM m e n
 
 rsaDecode :: (Integer,Integer) -> Integer -> Integer 
 rsaDecode = rsaEncode                              
@@ -215,4 +215,6 @@ trapdoor = rsaEncode
 secret, bound :: Integer                
 secret = mers 18
 bound  = 131
+                        
+
 

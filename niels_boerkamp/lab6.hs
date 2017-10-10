@@ -82,13 +82,31 @@ helper n | n `mod` 2 == 1 = 1 : helper (n `div` 2)
 nthPrime :: Int -> Integer
 nthPrime x = primes !! x         
 
-bitLength :: Int -> Int
+bitLength :: Integer -> Int
 bitLength x = length (toBin x)
          
-         
-primePairs :: Int -> Int -> [(Integer, Integer)] -> [(Integer, Integer)]
-primePairs x y [] = primePairs x y []
-            where 
-            p1 = nthPrime x
-            p2 = nthPrime y
-            validPair = p1 /= p2 && bitLength p1 == bitLength p2
+primesWithBitLength :: Int -> [Integer]
+primesWithBitLength n = filter (\x -> bitLength x == n) (takeWhile (\x -> bitLength x < (n + 1)) primes)
+            
+-- Inspiration for generating all possible tuples
+-- https://codereview.stackexchange.com/questions/152190/producing-all-possible-combinations-of-a-listhttps://codereview.stackexchange.com/questions/152190/producing-all-possible-combinations-of-a-list
+createGroups :: [a] -> [(a, a)]
+createGroups [] = []
+createGroups (x:xs) = map ((,) x) xs ++ createGroups xs  
+
+primePairs :: Int -> [(Integer, Integer)]
+primePairs x = createGroups (primesWithBitLength x)
+
+encodeDecodeCheck :: (Integer, Integer) -> Integer -> Bool
+encodeDecodeCheck (x,y) message = message == rsaDecode private (rsaEncode public message)
+                        where 
+                        public = rsaPublic x y
+                        private = rsaPrivate x y
+
+-- proof!
+-- Lab6> let x = head (primePairs 15)
+-- *Lab6> x
+-- (16411,16417)
+-- *Lab6> encodeDecodeCheck x 10
+-- True
+    
