@@ -103,10 +103,21 @@ encodeDecodeCheck (x,y) message = message == rsaDecode private (rsaEncode public
                         public = rsaPublic x y
                         private = rsaPrivate x y
 
--- proof!
--- Lab6> let x = head (primePairs 15)
--- *Lab6> x
--- (16411,16417)
--- *Lab6> encodeDecodeCheck x 10
--- True
+{-
+proof!
+Lab6> let x = head (primePairs 15)
+*Lab6> x
+(16411,16417)
+*Lab6> encodeDecodeCheck x 10
+True
+*Lab6> encodeDecodeCheck x (2^24)
+True
+*Lab6> encodeDecodeCheck x (2^25)
+True
+*Lab6> encodeDecodeCheck x (2^26)
+True
+*Lab6> encodeDecodeCheck x (2^27)
+True
+*Lab6>
+-}
     
