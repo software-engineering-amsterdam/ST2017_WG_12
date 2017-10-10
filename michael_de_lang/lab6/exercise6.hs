@@ -9,15 +9,16 @@ carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) |
       prime (18*k+1) ]
     
 main = do
-    x <- sequence $ map (\x -> primeMR 1 x) $ take 5 carmichael
+    print "6a"
+    x <- sequence $ map (\x -> primeMR 1 x) $ take 1 carmichael
     print $ x
     
-    
+    print "6b"
+    y <- sequence $ map (\x -> primeMR 1 $ 2^x - 1) $ take 25 primes
+    print y
+   
+-- time taken 6a: 30m
+-- time taken 6b: 10m   
 {-
-C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>ghc -O2 exercise5.hs
-[2 of 2] Compiling Main             ( exercise5.hs, exercise5.o )
-Linking exercise5.exe ...
-
-C:\Users\Oipo\Documents\ST2017_WG_12\michael_de_lang\lab6>exercise5.exe
-294409
+[False]
 -}
