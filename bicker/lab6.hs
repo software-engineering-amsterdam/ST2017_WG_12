@@ -25,7 +25,9 @@ exM' b e e' m c
 composites :: [Integer]
 composites = [x | x <- [1..], (length $ factors x) > 1]
 
--- Exercise 4 (90 minutes)
+-- Exercise 4 (180 minutes)
+primalityTest :: Show a => (a -> IO Bool) -> [a] -> IO ()
+primalityTest _ [] = print "Done."
 primalityTest f (x:xs) = do
     r <- f x
     if r then print x else return ()
@@ -35,37 +37,10 @@ primalityTest f (x:xs) = do
 --     until (f x)
 --     return expression
 
-testFermat n = do
-    x <- primeTestF (composites!!n)
-    if x then return (composites!!n)
-    else testFermat $ succ n
+exerciseFour k = do
+    primalityTest (primeTestsF k) composites
 
-data RandomComposite = RandomComposite Integer deriving Show
-instance Arbitrary RandomComposite where
-    arbitrary = fmap RandomComposite (elements [1..20]) -- replace with composites
-
-generateComposite :: Int -> IO Integer
-generateComposite 0 = do return 0
-generateComposite n = generate $ elements $ take n composites
-
-prop_test :: Int -> Property
-prop_test n = monadicIO $ do
-    composite <- run $ generateComposite n
-    r <- run $ primeTestF composite
-    assert $ not r
-
--- abc :: [Bool] -> Integer -> IO [Bool]
--- abc xs 100 = xs
--- abc xs n = do
---     x <- testFermat 0
---     return (abc (x:xs) (succ n))
-
-testsFermat k n = do
-    x <- primeTestsF k (composites!!n)
-    if x then return (composites!!n)
-    else testsFermat k $ succ n
-
--- Exercise 5 ()
+-- Exercise 5 (15 minutes)
 carmichael :: [Integer]
 carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) |
     k <- [2..],
@@ -73,4 +48,14 @@ carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) |
     prime (12*k+1),
     prime (18*k+1) ]
 
--- Exercise 6 ()
+exerciseFive k = do
+    primalityTest (primeTestsF k) carmichael
+
+-- Exercise 6 (10 minutes)
+exerciseSix k = do
+    primalityTest (primeMR k) carmichael
+
+-- Exercise 7 (10 minutes)
+exerciseSeven k = do
+    -- primalityTest (primeMR k) (fmap (\p -> 2 ^ p - 1) primes)
+    primalityTest (primeMR k) [mers x | x <- [1..25]]
