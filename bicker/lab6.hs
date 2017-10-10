@@ -33,9 +33,9 @@ primalityTest f (x:xs) = do
     if r then print x else return ()
     primalityTest f xs
 
--- primalityTest' f (x:xs) k = do
---     until (f x)
---     return expression
+-- k = 1, lowest composite found 9
+-- k = 2, lowest composite found 9
+-- k = 3, lowest composite found 45
 
 exerciseFour k = do
     primalityTest (primeTestsF k) composites

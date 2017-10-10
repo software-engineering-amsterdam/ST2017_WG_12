@@ -1,0 +1,27 @@
+	Mon Oct 09 15:32 2017 Time and Allocation Profiling Report  (Final)
+
+	   Lab 6.exe +RTS -p -RTS
+
+	total time  =        5.24 secs   (5239 ticks @ 1000 us, 1 processor)
+	total alloc = 131,362,448 bytes  (excludes profiling overheads)
+
+COST CENTRE MODULE   SRC                   %time %alloc
+
+expM        Lecture6 Lecture6.hs:111:1-20  100.0  100.0
+
+
+                                                                                 individual      inherited
+COST CENTRE  MODULE                   SRC                     no.     entries  %time %alloc   %time %alloc
+
+MAIN         MAIN                     <built-in>               48          0    0.0    0.0   100.0  100.0
+ CAF         GHC.IO.Encoding.CodePage <entire-module>          80          0    0.0    0.0     0.0    0.0
+ CAF         GHC.IO.Encoding          <entire-module>          76          0    0.0    0.0     0.0    0.0
+ CAF         GHC.IO.Handle.Text       <entire-module>          67          0    0.0    0.0     0.0    0.0
+ CAF         GHC.IO.Handle.FD         <entire-module>          61          0    0.0    0.0     0.0    0.0
+ CAF         Main                     <entire-module>          56          0    0.0    0.0   100.0  100.0
+  main       Main                     Lab 6.hs:(18,1)-(19,43)  96          1    0.0    0.0   100.0  100.0
+   exM       Lecture6                 Lecture6.hs:114:1-10     99          0    0.0    0.0   100.0  100.0
+    expM     Lecture6                 Lecture6.hs:111:1-20    100          1  100.0  100.0   100.0  100.0
+ CAF         Lecture6                 <entire-module>          55          0    0.0    0.0     0.0    0.0
+  exM        Lecture6                 Lecture6.hs:114:1-10     98          1    0.0    0.0     0.0    0.0
+ main        Main                     Lab 6.hs:(18,1)-(19,43)  97          0    0.0    0.0     0.0    0.0
