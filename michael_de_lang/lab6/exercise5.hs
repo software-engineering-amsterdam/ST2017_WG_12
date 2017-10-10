@@ -1,9 +1,15 @@
 import Lecture6 hiding (composites)
 import Control.Monad
+import Debug.Trace
 
-composites :: [Integer]
-composites = [x | x <- [2..], not (prime x)]
-
+carmichael :: [Integer]
+carmichael = [ (6*k+1)*(12*k+1)*(18*k+1) | 
+      k <- [2..], 
+      prime (6*k+1), 
+      prime (12*k+1), 
+      prime (18*k+1) ]
+      
+      
 -- https://stackoverflow.com/questions/1133800/haskell-monadic-takewhile
 sequenceWhile :: (Monad m) => (a -> Bool) -> [m a] -> m [a]
 sequenceWhile p xs = foldr (myLiftM2 (:) []) (return []) xs
@@ -16,36 +22,29 @@ sequenceWhile p xs = foldr (myLiftM2 (:) []) (return []) xs
 printFirstFooled :: IO [a] -> IO Integer
 printFirstFooled ms = do
     ys <- ms
-    return $ composites !! (length ys)
+    return $ carmichael !! (length ys)
     
-firstFool :: Int -> IO Integer
-firstFool k = printFirstFooled $ sequenceWhile (== False) $ map (primeTestsF k) composites
-
-minFool' :: Int -> Integer -> Int -> IO Integer
-minFool' k x 0 = return x;
-minFool' k x n = do
+firstFool :: IO Integer
+firstFool = printFirstFooled $ sequenceWhile (== False) $ map (primeTestF) carmichael
+    
+minFool' :: Integer -> Int -> IO Integer
+minFool' x 0 = return x;
+minFool' x n = do
     newX' <- newX
     if newX' < x then
-        minFool' k newX' (n-1)
+        trace (show newX' ++ " " ++ show x ++ " " ++ show n) $ minFool' newX' (n-1)
     else
-        minFool' k x (n-1)
-    where newX = firstFool k
+        trace (show newX' ++ " " ++ show x ++ " " ++ show n) $ minFool' x (n-1)
+    where newX = firstFool
 
-minFool :: Int -> IO Integer
-minFool k = do
-    x <- firstFool k
-    minFool' k x 100
-    
+minFool :: IO Integer
+minFool = do
+    x <- firstFool
+    minFool' x 100
     
 main = do
-    x <- minFool 1
-    print $ "k = 1: " ++ show x
-    x <- minFool 2
-    print $ "k = 2: " ++ show x
-    x <- minFool 3
-    print $ "k = 3: " ++ show x
-    x <- minFool 4
-    print $ "k = 4: " ++ show x
+    x <- minFool
+    print $ x
     
     
 {-
