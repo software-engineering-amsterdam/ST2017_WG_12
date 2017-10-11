@@ -13,7 +13,7 @@ exM' x y n = fst (e1 x y n)
 
 e1 :: Integer -> Integer -> Integer -> (Integer,Integer)
 e1 x y n | y == 0 = (rem 1 n, 1)
-         | y == 1 = (rem x n, x)
+         | rem y 2 == 1 = (rem ((rem x n) * (fst q)) n, x * (snd q))
          | otherwise = (rem ((fst z) * (rem (snd z) n)) n, p)
          where 
               z = (e1 x (div y 2) n)
@@ -34,10 +34,11 @@ exerciseOne = do
 -- Constantijn: 5m
 -- Niels: 5m 
 
--- See exercise1.prof and exercise2.prof
+-- See ExerciseTwo - own function.txt and ExerciseTwo - origional function.txt
+  -- Used values for exM:
+  -- 2342 32454232 6
 
 exerciseTwo = print $ exM 2342 32454232 6
-
 
 -- exercise 3
 --time taken:

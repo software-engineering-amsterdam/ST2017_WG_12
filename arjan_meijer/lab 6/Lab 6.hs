@@ -8,11 +8,12 @@ exM' x y n = fst (e1 x y n)
 
 e1 :: Integer -> Integer -> Integer -> (Integer,Integer)
 e1 x y n | y == 0 = (rem 1 n, 1)
-         | y == 1 = (rem x n, x)
+         | rem y 2 == 1 = (rem ((rem x n) * (fst q)) n, x * (snd q))
          | otherwise = (rem ((fst z) * (rem (snd z) n)) n, p)
          where 
               z = (e1 x (div y 2) n)
               p = (snd z) * (snd z)
+              q = (e1 x (y-1) n)
 
 
 exerciseOne = do
